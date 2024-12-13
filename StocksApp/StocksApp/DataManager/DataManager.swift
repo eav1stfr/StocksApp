@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 // finhub api key = ctaqp2hr01qgsps7omt0ctaqp2hr01qgsps7omtg
 
@@ -6,6 +7,7 @@ import Foundation
 //https://finnhub.io/api/v1/quote?symbol=MSFT&token=ctaqp2hr01qgsps7omt0ctaqp2hr01qgsps7omtg
 
 // logo api = https://finnhub.io/api/logo?symbol=ADBE
+// another logo api = https://eodhd.com/img/logos/US/MA.png
 
 protocol DataManagerProtocol {
     func fetchStocks(ticker: String, completion: @escaping (StockModel?, Error?) -> Void)
@@ -27,7 +29,7 @@ final class DataManager: DataManagerProtocol {
             }
             guard let safeData = data else {
                 print("no data received")
-                completion(nil, NSError(domain: "DataError", code: -1, userInfo: nil))
+                completion(nil, error)
                 return
             }
             do {

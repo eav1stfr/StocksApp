@@ -39,13 +39,16 @@ final class StocksListCustomCell: UITableViewCell {
         return label
     }()
     
-    private lazy var favoriteButton: UIButton = {
+    lazy var favoriteButton: UIButton = {
         let button = UIButton()
         button.isUserInteractionEnabled = true
+        button.backgroundColor = .white
         button.translatesAutoresizingMaskIntoConstraints = false
         button.heightAnchor.constraint(equalToConstant: 16).isActive = true
         button.widthAnchor.constraint(equalToConstant: 16).isActive = true
         button.addTarget(self, action: #selector(favoriteButtonPressed), for: .touchUpInside)
+        button.setImage(UIImage(systemName: "star.fill"), for: .normal)
+        button.tintColor = .systemGray
         return button
     }()
     
@@ -69,14 +72,39 @@ final class StocksListCustomCell: UITableViewCell {
 }
 
 extension StocksListCustomCell {
-    @objc private func favoriteButtonPressed() {
-//        if isFavorite {
-//            presenter.deleteFromFavorite(stock: StockModel(price: "123", changeInPrice: "+1", isFavorite: false, stockTicker: "APPL", companyName: "Apple Inc"))
-//        } else {
-//            presenter.addToFavoriteTapped(stock: StockModel(price: "123", changeInPrice: "+1", isFavorite: false, stockTicker: "APPL", companyName: "Apple Inc"))
-//        }
+    @objc private func favoriteButtonPressed(_ sender: UIButton) {
+        if isFavorite {
+            sender.tintColor = .systemGray
+        } else {
+            sender.tintColor = .systemYellow
+        }
+        
+        var positive: Bool
+        if changeInPriceLabel.text!.first=="-" {
+            positive = false
+        } else {
+            positive = true
+        }
+        
+        let numberPrice = priceLabel.text!.replacingOccurrences(of: "$", with: "")
+        let numberChange = changeInPriceLabel.text!.replacingOccurrences(of: "$", with: "")
+        
+        let currentStock = StockModel(
+            price: numberPrice,
+            changeInPrice: numberChange,
+            stockTicker: stockTickerLabel.text ?? "",
+            companyName: companyNameLabel.text ?? "",
+            positiveChange: positive
+        )
+        
+        if (isFavorite) {
+            presenter.deleteFromFavorite(stock: currentStock)
+        } else {
+            presenter.addToFavoriteTapped(stock: currentStock)
+        }
+        
         isFavorite.toggle()
-        print("add to fav button pressed")
+        //print("add to fav button pressed")
     }
     
     func set(cell: StockModel) {
@@ -92,9 +120,9 @@ extension StocksListCustomCell {
         }
         
         if !cell.isFavorite {
-            favoriteButton.backgroundColor = .systemGray
+            favoriteButton.tintColor = .systemGray
         } else {
-            favoriteButton.backgroundColor = .yellow
+            favoriteButton.tintColor = .systemYellow
         }
     }
 }

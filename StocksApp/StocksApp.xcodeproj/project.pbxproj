@@ -17,7 +17,6 @@
 		AFAA0FE82D05FD3E00E1D38D /* StocksList.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFAA0FE72D05FD3E00E1D38D /* StocksList.swift */; };
 		AFEA4D902D09F8E100AF3F11 /* StocksListCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEA4D8F2D09F8E100AF3F11 /* StocksListCustomCell.swift */; };
 		AFEA4D972D09F9A200AF3F11 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEA4D962D09F9A200AF3F11 /* DataManager.swift */; };
-		AFEA4D992D09F9FB00AF3F11 /* StocksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEA4D982D09F9FB00AF3F11 /* StocksViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +32,6 @@
 		AFAA0FE72D05FD3E00E1D38D /* StocksList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StocksList.swift; sourceTree = "<group>"; };
 		AFEA4D8F2D09F8E100AF3F11 /* StocksListCustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StocksListCustomCell.swift; sourceTree = "<group>"; };
 		AFEA4D962D09F9A200AF3F11 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
-		AFEA4D982D09F9FB00AF3F11 /* StocksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StocksViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,7 +90,6 @@
 			children = (
 				AFAA0FE62D05FD2E00E1D38D /* TableView */,
 				AFAA0FE22D05F65000E1D38D /* View.swift */,
-				AFEA4D982D09F9FB00AF3F11 /* StocksViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -193,7 +190,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFAA0FE12D05E45600E1D38D /* StockModel.swift in Sources */,
-				AFEA4D992D09F9FB00AF3F11 /* StocksViewController.swift in Sources */,
 				AFEA4D972D09F9A200AF3F11 /* DataManager.swift in Sources */,
 				AFAA0FE32D05F65000E1D38D /* View.swift in Sources */,
 				AFAA0FCA2D05DEBE00E1D38D /* AppDelegate.swift in Sources */,

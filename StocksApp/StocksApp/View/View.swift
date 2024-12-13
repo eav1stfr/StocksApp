@@ -14,17 +14,13 @@ final class StocksViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         presenter?.viewLoaded()
-        
-        
-        for stock in presenter!.stocksList {
-            print("STOCK: \(stock)")
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         updateTableData()
     }
     
+    private var isCurrentViewStocks: Bool = true
     
     private lazy var tableView: StocksList = {
         let table = StocksList()
@@ -39,6 +35,7 @@ final class StocksViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
         label.isUserInteractionEnabled = true
+        label.isUserInteractionEnabled = true
         let labelTapGesure = UITapGestureRecognizer(target: self, action: #selector(stocksTapped))
         label.addGestureRecognizer(labelTapGesure)
         return label
@@ -49,9 +46,11 @@ final class StocksViewController: UIViewController {
         label.text = "Favorite"
         label.font = UIFont.systemFont(ofSize: 18)
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.isUserInteractionEnabled = true
         label.textColor = .systemGray
         label.isUserInteractionEnabled = true
         let labelTapGesture = UITapGestureRecognizer(target: self, action: #selector(favoriteTapped))
+        label.addGestureRecognizer(labelTapGesture)
         return label
     }()
 }
@@ -89,8 +88,6 @@ private extension StocksViewController {
             stocksLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             stocksLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             
-            //favoriteLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            //favoriteLabel.bottomAnchor.constraint(equalTo: stocksLabel.bottomAnchor),
             favoriteLabel.centerYAnchor.constraint(equalTo: stocksLabel.centerYAnchor),
             favoriteLabel.leadingAnchor.constraint(equalTo: stocksLabel.trailingAnchor, constant: 20),
             
@@ -102,10 +99,34 @@ private extension StocksViewController {
     }
     
     @objc func stocksTapped() {
+        if !isCurrentViewStocks {
+            NSLayoutConstraint.activate([
+                stocksLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+                favoriteLabel.centerYAnchor.constraint(equalTo: stocksLabel.centerYAnchor)
+            ])
+            stocksLabel.font = UIFont.systemFont(ofSize: 28, weight: .bold)
+            favoriteLabel.font = UIFont.systemFont(ofSize: 18)
+            favoriteLabel.textColor = .systemGray
+            stocksLabel.textColor = .black
+            isCurrentViewStocks.toggle()
+        }
         presenter?.stocksChosen()
+        print("stocks chosen")
     }
     
     @objc func favoriteTapped() {
+        if isCurrentViewStocks {
+            NSLayoutConstraint.activate([
+                favoriteLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+                stocksLabel.centerYAnchor.constraint(equalTo: favoriteLabel.centerYAnchor)
+            ])
+            favoriteLabel.font = UIFont.systemFont(ofSize: 28, weight: .bold)
+            stocksLabel.font = UIFont.systemFont(ofSize: 18)
+            favoriteLabel.textColor = .black
+            stocksLabel.textColor = .systemGray
+            isCurrentViewStocks.toggle()
+        }
         presenter?.favoriteChosen()
+        print("favorite tapped")
     }
 }

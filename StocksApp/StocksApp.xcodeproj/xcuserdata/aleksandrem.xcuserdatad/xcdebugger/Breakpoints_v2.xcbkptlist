@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E389D544-7140-4F8E-8D2F-DD6679B9AC39"
+            uuid = "DF2C9CE0-9D87-4A80-909F-D59127679612"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "StocksApp/View/TableView/StocksListCustomCell.swift"
+            filePath = "StocksApp/Presenter/Presenter.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
-            landmarkName = "set(cell:)"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "viewLoaded()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -19,7 +19,6 @@ final class StocksList: UIView {
 extension StocksList: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        //delegate?.profileOptionViewDidSelect()
     }
 }
 
@@ -30,7 +29,7 @@ extension StocksList: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return presenter.stocksList.count
+        return presenter.currentStocksListToShow.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -40,13 +39,16 @@ extension StocksList: UITableViewDataSource {
         ) as? StocksListCustomCell else {
             return UITableViewCell()
         }
-        customCell.set(cell: presenter.stocksList[indexPath.row])
+        customCell.set(cell: presenter.currentStocksListToShow[indexPath.row])
         if indexPath.row%2==0 {
             customCell.backgroundColor = .systemGray6
+            customCell.favoriteButton.backgroundColor = .systemGray6
         } else {
             customCell.backgroundColor = .white
+            customCell.favoriteButton.backgroundColor = .white
         }
         customCell.layer.cornerRadius = 20
+        customCell.presenter = self.presenter
         return customCell
     }
 }

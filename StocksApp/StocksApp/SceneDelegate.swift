@@ -14,8 +14,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        let vc = StocksViewController()
+        let dataManager = DataManager()
+        let presenter = StocksPresenter(view: vc, dataManager: dataManager)
+        vc.presenter = presenter
+        
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = ViewController()
+        window.rootViewController = vc
         self.window = window
         self.window?.makeKeyAndVisible()
     }

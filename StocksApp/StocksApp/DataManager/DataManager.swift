@@ -15,7 +15,6 @@ protocol DataManagerProtocol {
 
 final class DataManager: DataManagerProtocol {
     func fetchStocks(ticker: String, completion: @escaping (StockModel?, Error?) -> Void) {
-        print("started fetching")
         let apiLink: String = "https://finnhub.io/api/v1/quote?symbol="+ticker+"&token=ctaqp2hr01qgsps7omt0ctaqp2hr01qgsps7omtg"
         let url = URL(string: apiLink)!
         var request = URLRequest(url: url)

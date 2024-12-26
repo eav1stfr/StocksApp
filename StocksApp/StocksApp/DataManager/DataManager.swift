@@ -10,8 +10,8 @@ import UIKit
 // another logo api = https://eodhd.com/img/logos/US/MA.png
 
 protocol DataManagerProtocol {
-    func fetchStocks(ticker: String, completion: @escaping (StockModel?, Error?) -> Void)
-    func fetchStockImage(ticker: String, completion: @escaping (UIImage?, Error?) -> Void)
+    func fetchStocks(ticker: String, completion: @escaping (Result<StockModel, Error>) -> Void)
+    func fetchStockImage(ticker: String, completion: @escaping (Result<UIImage, Error>) -> Void)
     func fetchFavoriteFromDB() -> [Favorite]
     func addFavoriteToDB(_ ticker: String)
     func deleteFavoriteFromDB(_ ticker: String)
@@ -62,31 +62,35 @@ final class DataManager: DataManagerProtocol {
     }
     
     // MARK: - Networking
-    func fetchStocks(ticker: String, completion: @escaping (StockModel?, Error?) -> Void) {
+    func fetchStocks(ticker: String, completion: @escaping (Result<StockModel, Error>) -> Void) {
         var stockImage = UIImage()
-        self.fetchStockImage(ticker: ticker) { image, error in
-            if let error = error {
-                print("caught error: \(error.localizedDescription)")
-            } else if let image = image {
+        self.fetchStockImage(ticker: ticker) { result in
+            switch (result) {
+            case .failure(let error):
+                print("Caught error fetching image: \(error.localizedDescription)")
+            case .success(let image):
                 stockImage = image
-                print("LESSGOO SUCCESS")
+                print("success fetching image")
             }
         }
         
         let apiLink: String = "https://finnhub.io/api/v1/quote?symbol="+ticker+"&token=ctaqp2hr01qgsps7omt0ctaqp2hr01qgsps7omtg"
-        let url = URL(string: apiLink)!
+        guard let url = URL(string: apiLink) else {
+            print("Error with apiLink")
+            return
+        }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         
         let task = URLSession.shared.dataTask(with: request) { data, responce, error in
             if error != nil {
                 print("CAUGHT ERROR: \(String(describing: error?.localizedDescription))")
-                completion(nil, error)
+                completion(.failure(error!))
                 return
             }
             guard let safeData = data else {
                 print("no data received")
-                completion(nil, error)
+                completion(.failure(error!))
                 return
             }
             do {
@@ -106,7 +110,7 @@ final class DataManager: DataManagerProtocol {
                 }
                 
                 DispatchQueue.main.async {
-                    completion(stockModel, nil)
+                    completion(.success(stockModel))
                 }
             } catch {
                 print("CAUGHT ERROR: \(error)")
@@ -116,9 +120,12 @@ final class DataManager: DataManagerProtocol {
         task.resume()
     }
     
-    func fetchStockImage(ticker: String, completion: @escaping (UIImage?, Error?) -> Void) {
+    func fetchStockImage(ticker: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
         let link = "https://finnhub.io/api/logo?symbol="+ticker
-        let url = URL(string: link)!
+        guard let url = URL(string: link) else {
+            print("Error with link in fetching stock image")
+            return
+        }
         let task = URLSession.shared.dataTask(with: url) { data, responce, error in
             if let error = error {
                 print("CAUGHT ERROR FETHCING IMAGE: \(error.localizedDescription)")
@@ -126,18 +133,19 @@ final class DataManager: DataManagerProtocol {
             }
             
             guard let data = data, let image = UIImage(data: data) else {
-                print("fail \(ticker)\n")
-                completion(nil, error)
+                guard let error = error else {
+                    return
+                }
+                completion(.failure(error))
                 return
             }
             
             DispatchQueue.main.async {
                 print("SUCCESS FETCHING IMAGE")
-                completion(image, nil)
+                completion(.success(image))
             }
             
         }
         task.resume()
     }
-    
 }

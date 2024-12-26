@@ -55,7 +55,7 @@ extension StocksList: UITableViewDelegate, UITableViewDataSource {
         ) as? StocksListCell else {
             return UITableViewCell()
         }
-        customCell.set(cell: presenter.returnAnItem(at: indexPath))
+        customCell.set(cell: presenter.getItem(at: indexPath))
         customCell.setBackgroundColor(indexPath.row%2==0 ? .systemGray6 : .white)
         customCell.delegate = self
         return customCell

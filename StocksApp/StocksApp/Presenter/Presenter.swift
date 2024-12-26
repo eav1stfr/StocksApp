@@ -11,6 +11,8 @@ protocol StocksPresenterProtocol: AnyObject {
 }
 
 final class StocksPresenter: StocksPresenterProtocol {
+        
+    private var savedFavStocks: [Favorite]?
     
     private let companyTickers: [String] = ["AAPL", "YNDX", "GOOGL", "AMZN", "BAC", "MSFT", "TSLA", "MA", "PFE", "JNJ", "TM", "XOM", "JPM", "CSCO", "KO", "EBAY"]
     
@@ -20,7 +22,7 @@ final class StocksPresenter: StocksPresenterProtocol {
     
     private var favoriteStocksList: [StockModel] = []
 
-    private var stocksList: [StockModel] = []
+    private var stocksList: [StockModel] = Array(repeating: StockModel(price: "", changeInPrice: "", stockTicker: "", companyName: "", positiveChange: false), count: 16)
     
     private var currentStocksListToShow: [StockModel] = Array(repeating: StockModel(price: "", changeInPrice: "", stockTicker: "", companyName: "", positiveChange: false), count: 16)
 
@@ -38,18 +40,27 @@ final class StocksPresenter: StocksPresenterProtocol {
     func viewLoaded() {
         for ticker in companyTickers {
             group.enter()
+            // MARK: - HERE
             dataManager.fetchStocks(ticker: ticker) { stock, error in
                 defer { self.group.leave() }
                 if let error = error {
                     print("Error: \(error.localizedDescription)")
                 } else if let stock = stock {
-                    self.stocksList.append(stock)
+                    self.stocksList[self.dict[stock.stockTicker]!] = stock
                     self.currentStocksListToShow[self.dict[stock.stockTicker]!] = stock
                 }
             }
         }
         
         group.notify(queue: .main) { [self] in
+            savedFavStocks = dataManager.fetchFavoriteFromDB()
+            
+            for ticker in savedFavStocks! {
+                stocksList[dict[ticker.ticker!]!].isFavorite = true
+                currentStocksListToShow[dict[ticker.ticker!]!].isFavorite = true
+                favoriteStocksList.append(stocksList[dict[ticker.ticker!]!])
+            }
+            
             view?.updateTableData()
         }
     }
@@ -60,6 +71,7 @@ final class StocksPresenter: StocksPresenterProtocol {
                 self.stocksList[index].isFavorite = true
                 let copy: StockModel = self.stocksList[index]
                 self.favoriteStocksList.append(copy)
+                dataManager.addFavoriteToDB(copy.stockTicker)
             }
         }
     }
@@ -69,6 +81,7 @@ final class StocksPresenter: StocksPresenterProtocol {
             if self.stocksList[index].isFavorite {
                 self.stocksList[index].isFavorite = false
                 if let idx = self.favoriteStocksList.firstIndex(where: {$0.stockTicker == stock.stockTicker}) {
+                    dataManager.deleteFavoriteFromDB(self.favoriteStocksList[idx].stockTicker)
                     self.favoriteStocksList.remove(at: idx)
                 }
             }

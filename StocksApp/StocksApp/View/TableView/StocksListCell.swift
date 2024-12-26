@@ -16,7 +16,7 @@ final class StocksListCell: UITableViewCell {
         image.contentMode = .scaleAspectFit
         image.heightAnchor.constraint(equalToConstant: 52).isActive = true
         image.widthAnchor.constraint(equalToConstant: 52).isActive = true
-        image.layer.cornerRadius = 12
+        image.layer.cornerRadius = 26
         return image
     }()
     
@@ -51,8 +51,9 @@ final class StocksListCell: UITableViewCell {
     private var stockTickerLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        //label.font = UIFont(name: "Montserrat-Bold")
         label.textColor = .black
-        label.font = UIFont.systemFont(ofSize: 18)
         return label
     }()
     
@@ -135,6 +136,7 @@ extension StocksListCell {
     }
     
     func set(cell: StockModel) {
+        image.image = cell.image
         priceLabel.text = "$"+cell.price
         changeInPriceLabel.text = cell.changeInPrice
         stockTickerLabel.text = cell.stockTicker

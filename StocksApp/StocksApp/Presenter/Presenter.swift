@@ -7,14 +7,14 @@ protocol StocksPresenterProtocol: AnyObject {
     func stocksChosen()
     func favoriteChosen()
     func numberOfItems() -> Int
-    func returnAnItem(at indexPath: IndexPath) -> StockModel
+    func getItem(at indexPath: IndexPath) -> StockModel
 }
 
 final class StocksPresenter: StocksPresenterProtocol {
+        
+    private var savedFavStocks: [Favorite]?
     
     private let companyTickers: [String] = ["AAPL", "YNDX", "GOOGL", "AMZN", "BAC", "MSFT", "TSLA", "MA", "PFE", "JNJ", "TM", "XOM", "JPM", "CSCO", "KO", "EBAY"]
-    
-    private let dict: Dictionary<String, Int> = ["AAPL" : 0, "YNDX" : 1, "GOOGL" : 2, "AMZN" : 3, "BAC" : 4, "MSFT" : 5, "TSLA" : 6, "MA" : 7, "PFE" : 8, "JNJ" : 9, "TM" : 10, "XOM" : 11, "JPM" : 12, "CSCO" : 13, "KO" : 14, "EBAY" : 15]
 
     private var currentViewIsStocks: Bool = true
     
@@ -22,13 +22,11 @@ final class StocksPresenter: StocksPresenterProtocol {
 
     private var stocksList: [StockModel] = []
     
-    private var currentStocksListToShow: [StockModel] = Array(repeating: StockModel(price: "", changeInPrice: "", stockTicker: "", companyName: "", positiveChange: false), count: 16)
+    private var currentStocksListToShow: [StockModel] = []
 
     unowned var view: StocksViewProtocol?
     
     private var dataManager: DataManagerProtocol
-    
-    private let group = DispatchGroup()
     
     init(view: StocksViewProtocol, dataManager: DataManagerProtocol) {
         self.view = view
@@ -36,30 +34,59 @@ final class StocksPresenter: StocksPresenterProtocol {
     }
     
     func viewLoaded() {
-        for ticker in companyTickers {
+        let group = DispatchGroup()
+        var localDict: Dictionary<Int, StockModel> = [:]
+        for (index, ticker) in companyTickers.enumerated() {
             group.enter()
-            dataManager.fetchStocks(ticker: ticker) { stock, error in
-                defer { self.group.leave() }
-                if let error = error {
-                    print("Error: \(error.localizedDescription)")
-                } else if let stock = stock {
-                    self.stocksList.append(stock)
-                    self.currentStocksListToShow[self.dict[stock.stockTicker]!] = stock
+            dataManager.fetchStocks(ticker: ticker) { result in
+                defer { group.leave() }
+                switch (result) {
+                case .failure(let error):
+                    print("Caught error fetching stocks: \(error.localizedDescription)")
+                case .success(let stock):
+                    localDict[index] = stock
                 }
             }
         }
         
         group.notify(queue: .main) { [self] in
+            savedFavStocks = dataManager.fetchFavoriteFromDB()
+            let size = localDict.count
+            var tempArr: [String] = []
+            guard let savedFav = savedFavStocks else {
+                return
+            }
+            for ticker in savedFav {
+                if let ticker = ticker.ticker {
+                    tempArr.append(ticker)
+                }
+            }
+            
+            for i in 0...size-1 {
+                guard var stock = localDict[i] else {
+                    print("No such stock exist")
+                    return
+                }
+                if tempArr.contains(stock.stockTicker) {
+                    stock.isFavorite = true
+                    favoriteStocksList.append(stock)
+                }
+                stocksList.append(stock)
+                currentStocksListToShow.append(stock)
+            }
+            
             view?.updateTableData()
         }
     }
     
     func addToFavoriteTapped(stock: StockModel) {
         if let index = self.stocksList.firstIndex(where: {$0.stockTicker == stock.stockTicker}) {
-            if !self.stocksList[index].isFavorite {
+            guard self.stocksList[index].isFavorite else {
                 self.stocksList[index].isFavorite = true
                 let copy: StockModel = self.stocksList[index]
                 self.favoriteStocksList.append(copy)
+                dataManager.addFavoriteToDB(copy.stockTicker)
+                return
             }
         }
     }
@@ -69,6 +96,7 @@ final class StocksPresenter: StocksPresenterProtocol {
             if self.stocksList[index].isFavorite {
                 self.stocksList[index].isFavorite = false
                 if let idx = self.favoriteStocksList.firstIndex(where: {$0.stockTicker == stock.stockTicker}) {
+                    dataManager.deleteFavoriteFromDB(self.favoriteStocksList[idx].stockTicker)
                     self.favoriteStocksList.remove(at: idx)
                 }
             }
@@ -76,10 +104,11 @@ final class StocksPresenter: StocksPresenterProtocol {
     }
     
     func stocksChosen() {
-        if !currentViewIsStocks {
+        guard currentViewIsStocks else {
             self.currentStocksListToShow = self.stocksList
             view?.updateTableData()
             currentViewIsStocks.toggle()
+            return
         }
     }
     
@@ -95,7 +124,7 @@ final class StocksPresenter: StocksPresenterProtocol {
         return currentStocksListToShow.count
     }
     
-    func returnAnItem(at indexPath: IndexPath) -> StockModel {
+    func getItem(at indexPath: IndexPath) -> StockModel {
         return currentStocksListToShow[indexPath.row]
     }
 }

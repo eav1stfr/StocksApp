@@ -57,6 +57,7 @@ final class StocksViewController: UIViewController {
     }()
     
     private func setupView() {
+        searchField.delegate = self
         view.backgroundColor = .white
         view.addSubview(searchField)
         view.addSubview(stocksLabel)
@@ -127,5 +128,13 @@ extension StocksViewController {
             isCurrentViewStocks.toggle()
         }
         presenter?.favoriteChosen()
+    }
+}
+
+extension StocksViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        let newView = ViewStartSearching()
+        newView.modalPresentationStyle = .pageSheet
+        self.present(newView, animated: true)
     }
 }

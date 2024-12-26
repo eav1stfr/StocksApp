@@ -1,6 +1,8 @@
 import Foundation
+import UIKit
 
 struct StockModel {
+    var image: UIImage = UIImage()
     var price: String
     var changeInPrice: String
     var isFavorite: Bool = false

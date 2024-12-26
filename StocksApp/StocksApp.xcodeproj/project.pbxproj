@@ -23,6 +23,10 @@
 		AFF6FA032D1C3AE500922045 /* Favorite+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF6FA012D1C3AE500922045 /* Favorite+CoreDataClass.swift */; };
 		AFF6FA042D1C3AE500922045 /* Favorite+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF6FA022D1C3AE500922045 /* Favorite+CoreDataProperties.swift */; };
 		AFF6FA072D1C757900922045 /* ViewStartEditing.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF6FA062D1C757900922045 /* ViewStartEditing.swift */; };
+		AFF6FA092D1D9FB900922045 /* StockSearchOptionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF6FA082D1D9FB900922045 /* StockSearchOptionButton.swift */; };
+		AFF6FA0B2D1DB09E00922045 /* HorizontalScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF6FA0A2D1DB09E00922045 /* HorizontalScroll.swift */; };
+		AFF6FA0E2D1DBCC900922045 /* RecentSearch+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF6FA0C2D1DBCC800922045 /* RecentSearch+CoreDataClass.swift */; };
+		AFF6FA0F2D1DBCC900922045 /* RecentSearch+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF6FA0D2D1DBCC800922045 /* RecentSearch+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +48,10 @@
 		AFF6FA012D1C3AE500922045 /* Favorite+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Favorite+CoreDataClass.swift"; sourceTree = "<group>"; };
 		AFF6FA022D1C3AE500922045 /* Favorite+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Favorite+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		AFF6FA062D1C757900922045 /* ViewStartEditing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewStartEditing.swift; sourceTree = "<group>"; };
+		AFF6FA082D1D9FB900922045 /* StockSearchOptionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockSearchOptionButton.swift; sourceTree = "<group>"; };
+		AFF6FA0A2D1DB09E00922045 /* HorizontalScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalScroll.swift; sourceTree = "<group>"; };
+		AFF6FA0C2D1DBCC800922045 /* RecentSearch+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecentSearch+CoreDataClass.swift"; sourceTree = "<group>"; };
+		AFF6FA0D2D1DBCC800922045 /* RecentSearch+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecentSearch+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +154,8 @@
 		AFF6F9DE2D19DB2D00922045 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
+				AFF6FA0C2D1DBCC800922045 /* RecentSearch+CoreDataClass.swift */,
+				AFF6FA0D2D1DBCC800922045 /* RecentSearch+CoreDataProperties.swift */,
 				AFF6FA012D1C3AE500922045 /* Favorite+CoreDataClass.swift */,
 				AFF6FA022D1C3AE500922045 /* Favorite+CoreDataProperties.swift */,
 				AFF6F9FE2D1C3AC100922045 /* CoreDataFavoriteModel.xcdatamodeld */,
@@ -157,6 +167,8 @@
 			isa = PBXGroup;
 			children = (
 				AFF6FA062D1C757900922045 /* ViewStartEditing.swift */,
+				AFF6FA082D1D9FB900922045 /* StockSearchOptionButton.swift */,
+				AFF6FA0A2D1DB09E00922045 /* HorizontalScroll.swift */,
 			);
 			path = ViewStartSearching;
 			sourceTree = "<group>";
@@ -231,8 +243,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AFF6FA092D1D9FB900922045 /* StockSearchOptionButton.swift in Sources */,
 				AFAA0FE12D05E45600E1D38D /* StockModel.swift in Sources */,
 				AFEA4D972D09F9A200AF3F11 /* DataManager.swift in Sources */,
+				AFF6FA0E2D1DBCC900922045 /* RecentSearch+CoreDataClass.swift in Sources */,
 				AFAA0FE32D05F65000E1D38D /* MainViewController.swift in Sources */,
 				AFE9D59C2D198A600043A79E /* helper.swift in Sources */,
 				AFF6FA002D1C3AC100922045 /* CoreDataFavoriteModel.xcdatamodeld in Sources */,
@@ -240,10 +254,12 @@
 				AFF6FA072D1C757900922045 /* ViewStartEditing.swift in Sources */,
 				AFAA0FCA2D05DEBE00E1D38D /* AppDelegate.swift in Sources */,
 				AFAA0FCC2D05DEBE00E1D38D /* SceneDelegate.swift in Sources */,
+				AFF6FA0B2D1DB09E00922045 /* HorizontalScroll.swift in Sources */,
 				AFF6FA032D1C3AE500922045 /* Favorite+CoreDataClass.swift in Sources */,
 				AFAA0FE82D05FD3E00E1D38D /* StocksList.swift in Sources */,
 				AFA43F372D10932B00CCB657 /* TextFieldSearch.swift in Sources */,
 				AFEA4D902D09F8E100AF3F11 /* StocksListCell.swift in Sources */,
+				AFF6FA0F2D1DBCC900922045 /* RecentSearch+CoreDataProperties.swift in Sources */,
 				AFAA0FE52D05F77400E1D38D /* Presenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

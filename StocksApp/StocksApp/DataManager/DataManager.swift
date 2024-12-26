@@ -15,6 +15,8 @@ protocol DataManagerProtocol {
     func fetchFavoriteFromDB() -> [Favorite]
     func addFavoriteToDB(_ ticker: String)
     func deleteFavoriteFromDB(_ ticker: String)
+    func addToRecentSearchDB(name: String)
+    func fetchFromRecentSearchDB() -> [RecentSearch]
 }
 
 final class DataManager: DataManagerProtocol {
@@ -59,6 +61,29 @@ final class DataManager: DataManagerProtocol {
                 print("CAUGHT ERROR TRYING TO DELETE STOCK FROM DB: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func addToRecentSearchDB(name: String) {
+        let newSearchRequest = RecentSearch(context: self.context)
+        newSearchRequest.companyName = name
+        
+        do {
+            try self.context.save()
+            print("success")
+        } catch {
+            print("CAUGHT ERROR TYRING TO SAVE NEW SEARCH REQUEST: \(error.localizedDescription)")
+        }
+    }
+    
+    func fetchFromRecentSearchDB() -> [RecentSearch] {
+        var searchArr: [RecentSearch] = []
+        do {
+            try searchArr = context.fetch(RecentSearch.fetchRequest())
+            return searchArr
+        } catch {
+            print("CAUGHT ERROR TRYING TO FETCH RECENT SEARCH FROM DB: \(error.localizedDescription)")
+        }
+        return searchArr
     }
     
     // MARK: - Networking

@@ -8,10 +8,11 @@ protocol StocksPresenterProtocol: AnyObject {
     func favoriteChosen()
     func numberOfItems() -> Int
     func getItem(at indexPath: IndexPath) -> StockModel
+    func addToRecentSearchDB(companyName: String)
+    func fetchRecentSearchFromDB() -> [String]
 }
 
 final class StocksPresenter: StocksPresenterProtocol {
-        
     private var savedFavStocks: [Favorite]?
     
     private let companyTickers: [String] = ["AAPL", "YNDX", "GOOGL", "AMZN", "BAC", "MSFT", "TSLA", "MA", "PFE", "JNJ", "TM", "XOM", "JPM", "CSCO", "KO", "EBAY"]
@@ -126,5 +127,21 @@ final class StocksPresenter: StocksPresenterProtocol {
     
     func getItem(at indexPath: IndexPath) -> StockModel {
         return currentStocksListToShow[indexPath.row]
+    }
+    
+    func addToRecentSearchDB(companyName: String) {
+        dataManager.addToRecentSearchDB(name: companyName)
+    }
+    
+    func fetchRecentSearchFromDB() -> [String] {
+        let searchArr: [RecentSearch] = dataManager.fetchFromRecentSearchDB()
+        var searchArrToReturn: [String] = []
+        for searchRequest in searchArr {
+            guard let name = searchRequest.companyName else {
+                return searchArrToReturn
+            }
+            searchArrToReturn.append(name)
+        }
+        return searchArrToReturn
     }
 }

@@ -51,15 +51,19 @@ final class ViewStartSearching: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        defer { setupView() }
-        guard let arr = delegate?.fetchSearchRequestsFromDB() else {
-            return
-        }
-        recentSearch = arr
+        setupView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func updateData() {
+        guard let arr = delegate?.fetchSearchRequestsFromDB() else {
+            return
+        }
+        recentSearch = arr
+        setupView()
     }
     
     private func setupView() {

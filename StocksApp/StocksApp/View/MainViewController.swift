@@ -62,6 +62,7 @@ final class StocksViewController: UIViewController {
     private func setupView() {
         searchField.delegate = self
         searchView.delegate = self
+        searchView.updateData()
         view.backgroundColor = .white
         addSubviews()
         setupConstraints()
@@ -164,13 +165,14 @@ extension StocksViewController: UITextFieldDelegate {
         if let name = searchField.text {
             presenter?.addToRecentSearchDB(companyName: name)
         }
+        searchView.updateData()
         searchField.text = ""
     }
 }
 
 extension StocksViewController: ViewStartSearchingDelegate {
     func displaySearchOption(with companyName: String) {
-        print("option tapped")
+        searchField.text = companyName
     }
     
     func fetchSearchRequestsFromDB() -> [String] {

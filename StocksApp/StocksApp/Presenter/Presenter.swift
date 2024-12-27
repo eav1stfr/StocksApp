@@ -10,20 +10,30 @@ protocol StocksPresenterProtocol: AnyObject {
     func getItem(at indexPath: IndexPath) -> StockModel
     func addToRecentSearchDB(companyName: String)
     func fetchRecentSearchFromDB() -> [String]
+    func performSearch(with companyTicker: String)
+    func resetSearchResults()
+    var isCurrentTableSearch: Bool { get set }
 }
 
 final class StocksPresenter: StocksPresenterProtocol {
+    
+    var isCurrentTableSearch: Bool = false
+    
     private var savedFavStocks: [Favorite]?
     
     private let companyTickers: [String] = ["AAPL", "YNDX", "GOOGL", "AMZN", "BAC", "MSFT", "TSLA", "MA", "PFE", "JNJ", "TM", "XOM", "JPM", "CSCO", "KO", "EBAY"]
 
     private var currentViewIsStocks: Bool = true
     
+    var isSearchResultTable: Bool = false
+    
     private var favoriteStocksList: [StockModel] = []
 
     private var stocksList: [StockModel] = []
     
     private var currentStocksListToShow: [StockModel] = []
+    
+    private var searchResultList: [StockModel] = []
 
     unowned var view: StocksViewProtocol?
     
@@ -53,13 +63,13 @@ final class StocksPresenter: StocksPresenterProtocol {
         group.notify(queue: .main) { [self] in
             savedFavStocks = dataManager.fetchFavoriteFromDB()
             let size = localDict.count
-            var tempArr: [String] = []
+            var favoriteStocks: [String] = []
             guard let savedFav = savedFavStocks else {
                 return
             }
             for ticker in savedFav {
                 if let ticker = ticker.ticker {
-                    tempArr.append(ticker)
+                    favoriteStocks.append(ticker)
                 }
             }
             
@@ -68,7 +78,7 @@ final class StocksPresenter: StocksPresenterProtocol {
                     print("No such stock exist")
                     return
                 }
-                if tempArr.contains(stock.stockTicker) {
+                if favoriteStocks.contains(stock.stockTicker) {
                     stock.isFavorite = true
                     favoriteStocksList.append(stock)
                 }
@@ -122,10 +132,17 @@ final class StocksPresenter: StocksPresenterProtocol {
     }
     
     func numberOfItems() -> Int {
+        if isCurrentTableSearch {
+            print("HERE: \(searchResultList.count)")
+            return searchResultList.count
+        }
         return currentStocksListToShow.count
     }
     
     func getItem(at indexPath: IndexPath) -> StockModel {
+        if isCurrentTableSearch {
+            return searchResultList[indexPath.row]
+        }
         return currentStocksListToShow[indexPath.row]
     }
     
@@ -143,5 +160,17 @@ final class StocksPresenter: StocksPresenterProtocol {
             searchArrToReturn.append(name)
         }
         return searchArrToReturn
+    }
+    
+    func performSearch(with companyTicker: String) {
+        guard let stock = stocksList.first(where: {$0.stockTicker == companyTicker}) else {
+            print("no such company exists in the list")
+            return
+        }
+        searchResultList.append(stock)
+    }
+    
+    func resetSearchResults() {
+        self.searchResultList = []
     }
 }

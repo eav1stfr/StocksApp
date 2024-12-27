@@ -16,7 +16,7 @@ final class ViewStartSearching: UIView {
     private let popularRequestsLabel: UILabel = {
         let label = UILabel()
         label.text = "Popular Requests"
-        label.font = UIFont.systemFont(ofSize: 25, weight: .bold)
+        label.font = UIFont(name: "Montserrat-Bold", size: 25)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
         return label
@@ -27,7 +27,7 @@ final class ViewStartSearching: UIView {
         label.text = "You've searched for this"
         label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 25, weight: .bold)
+        label.font = UIFont(name: "Montserrat-Bold", size: 25)
         return label
     }()
     
@@ -51,7 +51,7 @@ final class ViewStartSearching: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupView()
+        //setupView()
     }
     
     required init?(coder: NSCoder) {

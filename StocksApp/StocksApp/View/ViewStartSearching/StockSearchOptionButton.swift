@@ -14,7 +14,7 @@ final class StockSearchOptionButton: UIButton {
         self.heightAnchor.constraint(equalToConstant: 40).isActive = true
         self.layer.cornerRadius = 30
         self.setTitleColor(.black, for: .normal)
-        self.titleLabel?.font = UIFont.systemFont(ofSize: 20)
+        self.titleLabel?.font = UIFont(name: "Montserrat-Light.ttf", size: 20)
         self.isUserInteractionEnabled = true
         
         var config = UIButton.Configuration.filled()

@@ -1,14 +1,6 @@
 import Foundation
 import UIKit
 
-// finhub api key = ctaqp2hr01qgsps7omt0ctaqp2hr01qgsps7omtg
-
-//https://finnhub.io/api/v1/quote?symbol=AAPL&token=ctaqp2hr01qgsps7omt0ctaqp2hr01qgsps7omtg
-//https://finnhub.io/api/v1/quote?symbol=MSFT&token=ctaqp2hr01qgsps7omt0ctaqp2hr01qgsps7omtg
-
-// logo api = https://finnhub.io/api/logo?symbol=AAPL
-// another logo api = https://eodhd.com/img/logos/US/MA.png
-
 protocol DataManagerProtocol {
     func fetchStocks(ticker: String, completion: @escaping (Result<StockModel, Error>) -> Void)
     func fetchStockImage(ticker: String, completion: @escaping (Result<UIImage, Error>) -> Void)
@@ -156,7 +148,6 @@ final class DataManager: DataManagerProtocol {
                 print("CAUGHT ERROR FETHCING IMAGE: \(error.localizedDescription)")
                 return
             }
-            
             guard let data = data, let image = UIImage(data: data) else {
                 guard let error = error else {
                     return
@@ -164,12 +155,10 @@ final class DataManager: DataManagerProtocol {
                 completion(.failure(error))
                 return
             }
-            
             DispatchQueue.main.async {
-                print("SUCCESS FETCHING IMAGE")
+                print("SUCCESS FETCHING IMAGE \(ticker)")
                 completion(.success(image))
             }
-            
         }
         task.resume()
     }

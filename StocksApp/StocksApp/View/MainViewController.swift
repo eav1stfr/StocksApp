@@ -4,6 +4,7 @@ protocol StocksViewProtocol: AnyObject {
     func showStocks(stocks: [StockModel])
     func showError(error: String)
     func updateTableData()
+    func updateSearchResultsTable()
 }
 
 final class StocksViewController: UIViewController {
@@ -20,6 +21,14 @@ final class StocksViewController: UIViewController {
     
     private let searchView: ViewStartSearching = {
         let view = ViewStartSearching()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isHidden = true
+        return view
+    }()
+    
+    private lazy var searchResultView: SearchResultsView = {
+        let view = SearchResultsView()
+        view.tableView.presenter = self.presenter
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isHidden = true
         return view
@@ -74,6 +83,7 @@ final class StocksViewController: UIViewController {
         view.addSubview(favoriteLabel)
         view.addSubview(tableView)
         view.addSubview(searchView)
+        view.addSubview(searchResultView)
     }
     
     private func setupConstraints() {
@@ -86,6 +96,11 @@ final class StocksViewController: UIViewController {
             searchView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             searchView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            searchResultView.topAnchor.constraint(equalTo: searchField.bottomAnchor, constant: 20),
+            searchResultView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchResultView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            searchResultView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             stocksLabel.topAnchor.constraint(equalTo: searchField.bottomAnchor, constant: 20),
             stocksLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -102,6 +117,10 @@ final class StocksViewController: UIViewController {
 }
 
 extension StocksViewController: StocksViewProtocol {
+    func updateSearchResultsTable() {
+        self.searchResultView.tableView.updateData()
+    }
+    
     func updateTableData() {
         tableView.updateData()
     }
@@ -163,9 +182,15 @@ extension StocksViewController: UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let name = searchField.text {
+            presenter?.resetSearchResults()
             presenter?.addToRecentSearchDB(companyName: name)
+            presenter?.isCurrentTableSearch = true
+            presenter?.performSearch(with: name)
+            self.updateSearchResultsTable()
         }
         searchView.updateData()
+        searchView.isHidden = true
+        searchResultView.isHidden = false
         searchField.text = ""
     }
 }

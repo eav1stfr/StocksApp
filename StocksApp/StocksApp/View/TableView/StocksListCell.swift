@@ -10,13 +10,14 @@ final class StocksListCell: UITableViewCell {
     static var id: String = "StocksListCustomCell"
     weak var delegate: StocksListCellDelegate?
     
-    private let image: UIImageView = {
+    private var image: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFit
         image.heightAnchor.constraint(equalToConstant: 52).isActive = true
         image.widthAnchor.constraint(equalToConstant: 52).isActive = true
-        image.layer.cornerRadius = 26
+        image.layer.cornerRadius = 12
+        image.clipsToBounds = true
         return image
     }()
     
@@ -51,8 +52,7 @@ final class StocksListCell: UITableViewCell {
     private var stockTickerLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        //label.font = UIFont(name: "Montserrat-Bold")
+        label.font = UIFont(name: "Montserrat-Bold", size: 18)
         label.textColor = .black
         return label
     }()

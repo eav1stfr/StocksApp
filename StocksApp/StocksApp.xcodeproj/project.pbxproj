@@ -10,7 +10,6 @@
 		AF3FFBEC2D1EBA960099EE21 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3FFBEB2D1EBA960099EE21 /* Montserrat-Bold.ttf */; };
 		AF3FFBEE2D1EBC330099EE21 /* Montserrat-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3FFBED2D1EBC330099EE21 /* Montserrat-ThinItalic.ttf */; };
 		AF3FFBF02D1EBC490099EE21 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3FFBEF2D1EBC490099EE21 /* Montserrat-Light.ttf */; };
-		AF3FFBF22D1EBF7F0099EE21 /* ImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3FFBF12D1EBF7F0099EE21 /* ImageModel.swift */; };
 		AFA43F372D10932B00CCB657 /* TextFieldSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA43F362D10932B00CCB657 /* TextFieldSearch.swift */; };
 		AFAA0FCA2D05DEBE00E1D38D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFAA0FC92D05DEBE00E1D38D /* AppDelegate.swift */; };
 		AFAA0FCC2D05DEBE00E1D38D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFAA0FCB2D05DEBE00E1D38D /* SceneDelegate.swift */; };
@@ -36,7 +35,6 @@
 		AF3FFBEB2D1EBA960099EE21 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Bold.ttf"; sourceTree = "<group>"; };
 		AF3FFBED2D1EBC330099EE21 /* Montserrat-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ThinItalic.ttf"; sourceTree = "<group>"; };
 		AF3FFBEF2D1EBC490099EE21 /* Montserrat-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Light.ttf"; sourceTree = "<group>"; };
-		AF3FFBF12D1EBF7F0099EE21 /* ImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModel.swift; sourceTree = "<group>"; };
 		AFA43F362D10932B00CCB657 /* TextFieldSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldSearch.swift; sourceTree = "<group>"; };
 		AFAA0FC62D05DEBE00E1D38D /* StocksApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StocksApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFAA0FC92D05DEBE00E1D38D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -127,7 +125,6 @@
 			isa = PBXGroup;
 			children = (
 				AFAA0FE02D05E45600E1D38D /* StockModel.swift */,
-				AF3FFBF12D1EBF7F0099EE21 /* ImageModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -280,7 +277,6 @@
 				AFEA4D902D09F8E100AF3F11 /* StocksListCell.swift in Sources */,
 				AFF6FA0F2D1DBCC900922045 /* RecentSearch+CoreDataProperties.swift in Sources */,
 				AFAA0FE52D05F77400E1D38D /* Presenter.swift in Sources */,
-				AF3FFBF22D1EBF7F0099EE21 /* ImageModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

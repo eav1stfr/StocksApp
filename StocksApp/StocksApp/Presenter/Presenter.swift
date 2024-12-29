@@ -18,7 +18,7 @@ final class StocksPresenter: StocksPresenterProtocol {
     
     private var savedFavStocks: [Favorite]?
     
-    private let companyTickers: [String] = ["AAPL", "YNDX", "GOOGL", "AMZN", "BAC", "MSFT", "TSLA", "MA", "PFE", "JNJ", "TM", "XOM", "JPM", "CSCO", "KO", "EBAY"]
+    private let companyTickers: [String] = ["AAPL", "AMZN", "BAC", "MSFT", "PFE", "JNJ", "XOM", "JPM", "CSCO", "KO"]
 
     private var currentViewIsStocks: Bool = true
     

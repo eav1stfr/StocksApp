@@ -10,7 +10,7 @@ final class StocksListCell: UITableViewCell {
     static var id: String = "StocksListCustomCell"
     weak var delegate: StocksListCellDelegate?
     
-    private var image: UIImageView = {
+    var image: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFit
@@ -136,13 +136,13 @@ extension StocksListCell {
     }
     
     func set(cell: StockModel) {
-        image.image = cell.image
         priceLabel.text = "$"+cell.price
         changeInPriceLabel.text = cell.changeInPrice
         stockTickerLabel.text = cell.stockTicker
         companyNameLabel.text = cell.companyName
         changeInPriceLabel.textColor = cell.positiveChange ? .systemGreen : .red
         favoriteButton.tintColor = cell.isFavorite ? .systemYellow : .systemGray
+
     }
     
     func setBackgroundColor(_ color: UIColor) {

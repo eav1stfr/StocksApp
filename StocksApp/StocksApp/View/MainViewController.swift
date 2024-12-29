@@ -141,7 +141,6 @@ extension StocksViewController: StocksViewProtocol {
 
 extension StocksViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        print("started editing")
         searchView.isHidden = false
     }
     

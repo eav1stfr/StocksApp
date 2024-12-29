@@ -3,7 +3,7 @@ import UIKit
 
 protocol DataManagerProtocol {
     func fetchStocks(ticker: String, completion: @escaping (Result<StockModel, Error>) -> Void)
-    func fetchStockImage(ticker: String, completion: @escaping (Result<UIImage, Error>) -> Void)
+    func fetchStockImage(imageLink: String, completion: @escaping (Result<UIImage, Error>) -> Void)
     func fetchFavoriteFromDB() -> [Favorite]
     func addFavoriteToDB(_ ticker: String)
     func deleteFavoriteFromDB(_ ticker: String)
@@ -12,7 +12,6 @@ protocol DataManagerProtocol {
 }
 
 final class DataManager: DataManagerProtocol {
-    
     // MARK: - Core Data Functionality
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
@@ -28,27 +27,23 @@ final class DataManager: DataManagerProtocol {
     }
     
     func addFavoriteToDB(_ ticker: String) {
-        print("trying to add")
         let newStock = Favorite(context: self.context)
         newStock.ticker = ticker
         
         do {
             try self.context.save()
-            print("success on saving new favorite")
         } catch {
             print("CAUGHT ERROR TRYING TO SAVE NEW STOCK: \(error.localizedDescription)")
         }
     }
     
     func deleteFavoriteFromDB(_ ticker: String) {
-        print("trying to delete")
         let arr: [Favorite] = fetchFavoriteFromDB()
         if let idx = arr.firstIndex(where: {$0.ticker == ticker}) {
             let stockToRemoveFromDB = arr[idx]
             self.context.delete(stockToRemoveFromDB)
             do {
                 try self.context.save()
-                print("deleted successfully")
             } catch {
                 print("CAUGHT ERROR TRYING TO DELETE STOCK FROM DB: \(error.localizedDescription)")
             }
@@ -61,7 +56,6 @@ final class DataManager: DataManagerProtocol {
         
         do {
             try self.context.save()
-            print("success")
         } catch {
             print("CAUGHT ERROR TYRING TO SAVE NEW SEARCH REQUEST: \(error.localizedDescription)")
         }
@@ -80,18 +74,6 @@ final class DataManager: DataManagerProtocol {
     
     // MARK: - Networking
     func fetchStocks(ticker: String, completion: @escaping (Result<StockModel, Error>) -> Void) {
-        var stockImage = UIImage()
-        
-        self.fetchStockImage(ticker: ticker) { result in
-            switch (result) {
-            case .failure(let error):
-                print("Caught error fetching image: \(error.localizedDescription)")
-            case .success(let image):
-                stockImage = image
-                print("success fetching image")
-            }
-        }
-        
         let apiLink: String = "https://finnhub.io/api/v1/quote?symbol="+ticker+"&token=ctaqp2hr01qgsps7omt0ctaqp2hr01qgsps7omtg"
         guard let url = URL(string: apiLink) else {
             print("Error with apiLink")
@@ -114,13 +96,13 @@ final class DataManager: DataManagerProtocol {
             do {
                 let stock = try JSONDecoder().decode(StockModelToReceive.self, from: safeData)
                 var stockModel = StockModel(
-                    image: stockImage,
                     price: String(stock.c),
                     changeInPrice: String(stock.d)+"$",
                     isFavorite: false,
                     stockTicker: ticker,
                     companyName: ticker,
-                    positiveChange: !String(stock.d).hasPrefix("-")
+                    positiveChange: !String(stock.d).hasPrefix("-"),
+                    imageLink: "https://finnhub.io/api/logo?symbol="+ticker
                 )
                 
                 if !String(stock.d).hasPrefix("-") {
@@ -138,9 +120,8 @@ final class DataManager: DataManagerProtocol {
         task.resume()
     }
     
-    func fetchStockImage(ticker: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
-        let link = "https://finnhub.io/api/logo?symbol="+ticker
-        guard let url = URL(string: link) else {
+    func fetchStockImage(imageLink: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
+        guard let url = URL(string: imageLink) else {
             print("Error with link in fetching stock image")
             return
         }
@@ -157,7 +138,6 @@ final class DataManager: DataManagerProtocol {
                 return
             }
             DispatchQueue.main.async {
-                print("SUCCESS FETCHING IMAGE \(ticker)")
                 completion(.success(image))
             }
         }

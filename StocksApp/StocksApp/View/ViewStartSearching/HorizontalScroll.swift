@@ -94,7 +94,7 @@ final class HorizontalScroll: UIScrollView {
     @objc
     private func optionChosen(_ sender: UIButton) {
         guard let label = sender.titleLabel, let str = label.text else {
-            print("faced some error")
+            print("faced some error trying to choose option")
             return
         }
         delegateForButton?.optionTapped(currString: str)

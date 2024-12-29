@@ -18,7 +18,6 @@ final class StockSearchOptionButton: UIButton {
         self.isUserInteractionEnabled = true
         
         var config = UIButton.Configuration.filled()
-        config.title = "Apple"
         config.baseBackgroundColor = .systemGray5
         config.baseForegroundColor = .black
         config.background.cornerRadius = 20

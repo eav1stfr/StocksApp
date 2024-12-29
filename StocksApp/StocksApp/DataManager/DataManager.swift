@@ -81,6 +81,7 @@ final class DataManager: DataManagerProtocol {
     // MARK: - Networking
     func fetchStocks(ticker: String, completion: @escaping (Result<StockModel, Error>) -> Void) {
         var stockImage = UIImage()
+        
         self.fetchStockImage(ticker: ticker) { result in
             switch (result) {
             case .failure(let error):

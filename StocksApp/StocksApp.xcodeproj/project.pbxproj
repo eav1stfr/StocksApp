@@ -11,7 +11,6 @@
 		AF3FFBEE2D1EBC330099EE21 /* Montserrat-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3FFBED2D1EBC330099EE21 /* Montserrat-ThinItalic.ttf */; };
 		AF3FFBF02D1EBC490099EE21 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3FFBEF2D1EBC490099EE21 /* Montserrat-Light.ttf */; };
 		AF3FFBF22D1EBF7F0099EE21 /* ImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3FFBF12D1EBF7F0099EE21 /* ImageModel.swift */; };
-		AF3FFBF42D1EE7FB0099EE21 /* SearchResultStocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3FFBF32D1EE7FB0099EE21 /* SearchResultStocks.swift */; };
 		AFA43F372D10932B00CCB657 /* TextFieldSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA43F362D10932B00CCB657 /* TextFieldSearch.swift */; };
 		AFAA0FCA2D05DEBE00E1D38D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFAA0FC92D05DEBE00E1D38D /* AppDelegate.swift */; };
 		AFAA0FCC2D05DEBE00E1D38D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFAA0FCB2D05DEBE00E1D38D /* SceneDelegate.swift */; };
@@ -38,7 +37,6 @@
 		AF3FFBED2D1EBC330099EE21 /* Montserrat-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-ThinItalic.ttf"; sourceTree = "<group>"; };
 		AF3FFBEF2D1EBC490099EE21 /* Montserrat-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Light.ttf"; sourceTree = "<group>"; };
 		AF3FFBF12D1EBF7F0099EE21 /* ImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModel.swift; sourceTree = "<group>"; };
-		AF3FFBF32D1EE7FB0099EE21 /* SearchResultStocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultStocks.swift; sourceTree = "<group>"; };
 		AFA43F362D10932B00CCB657 /* TextFieldSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldSearch.swift; sourceTree = "<group>"; };
 		AFAA0FC62D05DEBE00E1D38D /* StocksApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StocksApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFAA0FC92D05DEBE00E1D38D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -188,7 +186,6 @@
 				AFF6FA062D1C757900922045 /* ViewStartEditing.swift */,
 				AFF6FA082D1D9FB900922045 /* StockSearchOptionButton.swift */,
 				AFF6FA0A2D1DB09E00922045 /* HorizontalScroll.swift */,
-				AF3FFBF32D1EE7FB0099EE21 /* SearchResultStocks.swift */,
 			);
 			path = ViewStartSearching;
 			sourceTree = "<group>";
@@ -268,7 +265,6 @@
 			files = (
 				AFF6FA092D1D9FB900922045 /* StockSearchOptionButton.swift in Sources */,
 				AFAA0FE12D05E45600E1D38D /* StockModel.swift in Sources */,
-				AF3FFBF42D1EE7FB0099EE21 /* SearchResultStocks.swift in Sources */,
 				AFEA4D972D09F9A200AF3F11 /* DataManager.swift in Sources */,
 				AFF6FA0E2D1DBCC900922045 /* RecentSearch+CoreDataClass.swift in Sources */,
 				AFAA0FE32D05F65000E1D38D /* MainViewController.swift in Sources */,

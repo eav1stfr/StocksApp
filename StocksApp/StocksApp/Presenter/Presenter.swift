@@ -10,14 +10,11 @@ protocol StocksPresenterProtocol: AnyObject {
     func getItem(at indexPath: IndexPath) -> StockModel
     func addToRecentSearchDB(companyName: String)
     func fetchRecentSearchFromDB() -> [String]
-    func performSearch(with companyTicker: String)
+    func performSearch(with companyTicker: String) throws
     func resetSearchResults()
-    var isCurrentTableSearch: Bool { get set }
 }
 
 final class StocksPresenter: StocksPresenterProtocol {
-    
-    var isCurrentTableSearch: Bool = false
     
     private var savedFavStocks: [Favorite]?
     
@@ -132,17 +129,10 @@ final class StocksPresenter: StocksPresenterProtocol {
     }
     
     func numberOfItems() -> Int {
-        if isCurrentTableSearch {
-            print("HERE: \(searchResultList.count)")
-            return searchResultList.count
-        }
         return currentStocksListToShow.count
     }
     
     func getItem(at indexPath: IndexPath) -> StockModel {
-        if isCurrentTableSearch {
-            return searchResultList[indexPath.row]
-        }
         return currentStocksListToShow[indexPath.row]
     }
     
@@ -162,12 +152,13 @@ final class StocksPresenter: StocksPresenterProtocol {
         return searchArrToReturn
     }
     
-    func performSearch(with companyTicker: String) {
+    func performSearch(with companyTicker: String) throws {
         guard let stock = stocksList.first(where: {$0.stockTicker == companyTicker}) else {
-            print("no such company exists in the list")
-            return
+            throw NSError()
         }
         searchResultList.append(stock)
+        currentStocksListToShow = searchResultList
+        view?.updateTableData()
     }
     
     func resetSearchResults() {

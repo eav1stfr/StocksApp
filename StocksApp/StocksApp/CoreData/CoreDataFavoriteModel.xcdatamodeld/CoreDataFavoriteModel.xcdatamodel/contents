@@ -3,4 +3,7 @@
     <entity name="Favorite" representedClassName="Favorite" syncable="YES">
         <attribute name="ticker" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="RecentSearch" representedClassName="RecentSearch" syncable="YES">
+        <attribute name="companyName" optional="YES" attributeType="String"/>
+    </entity>
 </model>

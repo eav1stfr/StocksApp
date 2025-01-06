@@ -1,8 +1,6 @@
 import UIKit
 
 protocol StocksViewProtocol: AnyObject {
-    func showStocks(stocks: [StockModel])
-    func showError(error: String)
     func updateTableData()
 }
 
@@ -16,11 +14,14 @@ final class StocksViewController: UIViewController {
         presenter?.viewLoaded()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        updateTableData()
-    }
-    
     private var isCurrentViewStocks: Bool = true
+    
+    private let searchView: StartSearchingView = {
+        let view = StartSearchingView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isHidden = true
+        return view
+    }()
     
     private let searchField = TextFieldSearch()
     
@@ -58,15 +59,31 @@ final class StocksViewController: UIViewController {
     
     private func setupView() {
         searchField.delegate = self
+        searchView.delegate = self
+        searchView.updateData()
         view.backgroundColor = .white
+        addSubviews()
+        setupConstraints()
+    }
+    
+    private func addSubviews() {
         view.addSubview(searchField)
         view.addSubview(stocksLabel)
         view.addSubview(favoriteLabel)
         view.addSubview(tableView)
+        view.addSubview(searchView)
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             searchField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             searchField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             searchField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            searchView.topAnchor.constraint(equalTo: searchField.bottomAnchor, constant: 20),
+            searchView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            searchView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             stocksLabel.topAnchor.constraint(equalTo: searchField.bottomAnchor, constant: 20),
             stocksLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -80,23 +97,7 @@ final class StocksViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
-}
-
-extension StocksViewController: StocksViewProtocol {
-    func updateTableData() {
-        tableView.updateData()
-    }
     
-    func showStocks(stocks: [StockModel]) {
-        
-    }
-    
-    func showError(error: String) {
-        
-    }
-}
-
-extension StocksViewController {
     @objc
     private func stocksTapped() {
         guard isCurrentViewStocks else {
@@ -129,12 +130,54 @@ extension StocksViewController {
         }
         presenter?.favoriteChosen()
     }
+    
+}
+
+extension StocksViewController: StocksViewProtocol {
+    func updateTableData() {
+        tableView.updateData()
+    }
 }
 
 extension StocksViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        let newView = ViewStartSearching()
-        newView.modalPresentationStyle = .pageSheet
-        self.present(newView, animated: true)
+        searchView.isHidden = false
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        searchField.endEditing(true)
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if let name = searchField.text {
+            presenter?.resetSearchResults()
+            presenter?.addToRecentSearchDB(companyName: name)
+            do {
+                try presenter?.performSearch(with: name)
+            } catch {
+                let alert = UIAlertController(title: "Oops", message: "No such ticker exists in current database", preferredStyle: .alert)
+                let action = UIAlertAction(title: "Go back", style: .default)
+                alert.addAction(action)
+                self.present(alert, animated: true)
+            }
+        }
+        searchView.isHidden = true
+        searchField.text = ""
+    }
+}
+
+extension StocksViewController: StartSearchingViewDelegate {
+    func displaySearchOption(with companyName: String) {
+        searchField.text = companyName
+    }
+    
+    func fetchSearchRequestsFromDB() -> [String] {
+        var arrToReturn: [String] = []
+        guard let arr = presenter?.fetchRecentSearchFromDB() else {
+            return arrToReturn
+        }
+        arrToReturn = arr
+        return arrToReturn
     }
 }

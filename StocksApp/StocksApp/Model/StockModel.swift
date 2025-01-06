@@ -2,13 +2,13 @@ import Foundation
 import UIKit
 
 struct StockModel {
-    var image: UIImage = UIImage()
     var price: String
     var changeInPrice: String
     var isFavorite: Bool = false
     var stockTicker: String
     var companyName: String
     var positiveChange: Bool
+    var imageLink: String
 }
 
 struct StockModelToReceive: Codable {

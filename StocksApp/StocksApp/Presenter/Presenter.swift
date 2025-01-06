@@ -8,21 +8,30 @@ protocol StocksPresenterProtocol: AnyObject {
     func favoriteChosen()
     func numberOfItems() -> Int
     func getItem(at indexPath: IndexPath) -> StockModel
+    func addToRecentSearchDB(companyName: String)
+    func fetchRecentSearchFromDB() -> [String]
+    func performSearch(with companyTicker: String) throws
+    func resetSearchResults()
+    func fetchImage(imageLink: String, completion: @escaping (Result<Data, Error>)->Void)
 }
 
 final class StocksPresenter: StocksPresenterProtocol {
-        
+    
     private var savedFavStocks: [Favorite]?
     
-    private let companyTickers: [String] = ["AAPL", "YNDX", "GOOGL", "AMZN", "BAC", "MSFT", "TSLA", "MA", "PFE", "JNJ", "TM", "XOM", "JPM", "CSCO", "KO", "EBAY"]
+    private let companyTickers: [String] = ["AAPL", "AMZN", "BAC", "MSFT", "PFE", "JNJ", "XOM", "JPM", "CSCO", "KO"]
 
     private var currentViewIsStocks: Bool = true
+    
+    var isSearchResultTable: Bool = false
     
     private var favoriteStocksList: [StockModel] = []
 
     private var stocksList: [StockModel] = []
     
     private var currentStocksListToShow: [StockModel] = []
+    
+    private var searchResultList: [StockModel] = []
 
     unowned var view: StocksViewProtocol?
     
@@ -52,13 +61,13 @@ final class StocksPresenter: StocksPresenterProtocol {
         group.notify(queue: .main) { [self] in
             savedFavStocks = dataManager.fetchFavoriteFromDB()
             let size = localDict.count
-            var tempArr: [String] = []
+            var favoriteStocks: [String] = []
             guard let savedFav = savedFavStocks else {
                 return
             }
             for ticker in savedFav {
                 if let ticker = ticker.ticker {
-                    tempArr.append(ticker)
+                    favoriteStocks.append(ticker)
                 }
             }
             
@@ -67,7 +76,7 @@ final class StocksPresenter: StocksPresenterProtocol {
                     print("No such stock exist")
                     return
                 }
-                if tempArr.contains(stock.stockTicker) {
+                if favoriteStocks.contains(stock.stockTicker) {
                     stock.isFavorite = true
                     favoriteStocksList.append(stock)
                 }
@@ -103,6 +112,20 @@ final class StocksPresenter: StocksPresenterProtocol {
         }
     }
     
+    func fetchImage(imageLink: String, completion: @escaping (Result<Data, Error>)->Void) {
+        dataManager.fetchStockImage(imageLink: imageLink) { result in
+            switch result {
+            case .failure(let error):
+                print("caught unexpected error trying to fetch image: \(error.localizedDescription)")
+                completion(.failure(error))
+            case .success(let data):
+                DispatchQueue.main.async {
+                    completion(.success(data))
+                }
+            }
+        }
+    }
+    
     func stocksChosen() {
         guard currentViewIsStocks else {
             self.currentStocksListToShow = self.stocksList
@@ -126,5 +149,34 @@ final class StocksPresenter: StocksPresenterProtocol {
     
     func getItem(at indexPath: IndexPath) -> StockModel {
         return currentStocksListToShow[indexPath.row]
+    }
+    
+    func addToRecentSearchDB(companyName: String) {
+        dataManager.addToRecentSearchDB(name: companyName)
+    }
+    
+    func fetchRecentSearchFromDB() -> [String] {
+        let searchArr: [RecentSearch] = dataManager.fetchFromRecentSearchDB()
+        var searchArrToReturn: [String] = []
+        for searchRequest in searchArr {
+            guard let name = searchRequest.companyName else {
+                return searchArrToReturn
+            }
+            searchArrToReturn.append(name)
+        }
+        return searchArrToReturn
+    }
+    
+    func performSearch(with companyTicker: String) throws {
+        guard let stock = stocksList.first(where: {$0.stockTicker == companyTicker}) else {
+            throw NSError()
+        }
+        searchResultList.append(stock)
+        currentStocksListToShow = searchResultList
+        view?.updateTableData()
+    }
+    
+    func resetSearchResults() {
+        self.searchResultList = []
     }
 }

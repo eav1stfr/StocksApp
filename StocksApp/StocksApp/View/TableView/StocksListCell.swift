@@ -10,13 +10,14 @@ final class StocksListCell: UITableViewCell {
     static var id: String = "StocksListCustomCell"
     weak var delegate: StocksListCellDelegate?
     
-    private let image: UIImageView = {
+    var cellImageView: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.contentMode = .scaleAspectFit
         image.heightAnchor.constraint(equalToConstant: 52).isActive = true
         image.widthAnchor.constraint(equalToConstant: 52).isActive = true
-        image.layer.cornerRadius = 26
+        image.layer.cornerRadius = 12
+        image.clipsToBounds = true
         return image
     }()
     
@@ -51,8 +52,7 @@ final class StocksListCell: UITableViewCell {
     private var stockTickerLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        //label.font = UIFont(name: "Montserrat-Bold")
+        label.font = UIFont(name: "Montserrat-Bold", size: 18)
         label.textColor = .black
         return label
     }()
@@ -77,6 +77,11 @@ final class StocksListCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellImageView.image = nil
+    }
+    
     private func setupView() {
         backgroundColor = .white
         addSubviews()
@@ -84,7 +89,7 @@ final class StocksListCell: UITableViewCell {
     }
     
     private func addSubviews() {
-        addSubview(image)
+        addSubview(cellImageView)
         addSubview(priceLabel)
         addSubview(changeInPriceLabel)
         addSubview(favoriteButton)
@@ -95,8 +100,8 @@ final class StocksListCell: UITableViewCell {
     private func setupConstraints() {
         self.layer.cornerRadius = 20
         NSLayoutConstraint.activate([
-            image.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            image.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            cellImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            cellImageView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             
             stockTickerLabel.topAnchor.constraint(equalTo: topAnchor, constant: 14),
             stockTickerLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
@@ -117,6 +122,7 @@ final class StocksListCell: UITableViewCell {
 }
 
 extension StocksListCell {
+    
     @objc
     private func favoriteButtonPressed(_ sender: UIButton) {
         sender.tintColor = isFavorite ? .systemGray : .systemYellow
@@ -128,7 +134,8 @@ extension StocksListCell {
             changeInPrice: numberChange,
             stockTicker: stockTickerLabel.text ?? "",
             companyName: companyNameLabel.text ?? "",
-            positiveChange: positive
+            positiveChange: positive,
+            imageLink: ""
         )
         isFavorite ? delegate?.deletFromFavorite(stock: currentStock) : delegate?.addToFavorite(stock: currentStock)
         
@@ -136,13 +143,13 @@ extension StocksListCell {
     }
     
     func set(cell: StockModel) {
-        image.image = cell.image
         priceLabel.text = "$"+cell.price
         changeInPriceLabel.text = cell.changeInPrice
         stockTickerLabel.text = cell.stockTicker
         companyNameLabel.text = cell.companyName
         changeInPriceLabel.textColor = cell.positiveChange ? .systemGreen : .red
         favoriteButton.tintColor = cell.isFavorite ? .systemYellow : .systemGray
+
     }
     
     func setBackgroundColor(_ color: UIColor) {

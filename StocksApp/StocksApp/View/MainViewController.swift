@@ -16,8 +16,8 @@ final class StocksViewController: UIViewController {
     
     private var isCurrentViewStocks: Bool = true
     
-    private let searchView: ViewStartSearching = {
-        let view = ViewStartSearching()
+    private let searchView: StartSearchingView = {
+        let view = StartSearchingView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isHidden = true
         return view
@@ -167,7 +167,7 @@ extension StocksViewController: UITextFieldDelegate {
     }
 }
 
-extension StocksViewController: ViewStartSearchingDelegate {
+extension StocksViewController: StartSearchingViewDelegate {
     func displaySearchOption(with companyName: String) {
         searchField.text = companyName
     }

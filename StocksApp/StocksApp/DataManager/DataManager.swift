@@ -3,7 +3,7 @@ import UIKit
 
 protocol DataManagerProtocol {
     func fetchStocks(ticker: String, completion: @escaping (Result<StockModel, Error>) -> Void)
-    func fetchStockImage(imageLink: String, completion: @escaping (Result<UIImage, Error>) -> Void)
+    func fetchStockImage(imageLink: String, completion: @escaping (Result<Data, Error>) -> Void)
     func fetchFavoriteFromDB() -> [Favorite]
     func addFavoriteToDB(_ ticker: String)
     func deleteFavoriteFromDB(_ ticker: String)
@@ -120,7 +120,7 @@ final class DataManager: DataManagerProtocol {
         task.resume()
     }
     
-    func fetchStockImage(imageLink: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
+    func fetchStockImage(imageLink: String, completion: @escaping (Result<Data, Error>) -> Void) {
         guard let url = URL(string: imageLink) else {
             print("Error with link in fetching stock image")
             return
@@ -130,7 +130,7 @@ final class DataManager: DataManagerProtocol {
                 print("CAUGHT ERROR FETHCING IMAGE: \(error.localizedDescription)")
                 return
             }
-            guard let data = data, let image = UIImage(data: data) else {
+            guard let data = data else {
                 guard let error = error else {
                     return
                 }
@@ -138,7 +138,7 @@ final class DataManager: DataManagerProtocol {
                 return
             }
             DispatchQueue.main.async {
-                completion(.success(image))
+                completion(.success(data))
             }
         }
         task.resume()

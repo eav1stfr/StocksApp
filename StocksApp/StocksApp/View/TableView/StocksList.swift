@@ -58,13 +58,17 @@ extension StocksList: UITableViewDelegate, UITableViewDataSource {
         customCell.set(cell: presenter.getItem(at: indexPath))
         customCell.setBackgroundColor(indexPath.row%2==0 ? .systemGray6 : .white)
         customCell.delegate = self
-        DataManager().fetchStockImage(imageLink: presenter.getItem(at: indexPath).imageLink) { result in
-            switch (result) {
+        let imageLink = presenter.getItem(at: indexPath).imageLink
+        presenter.fetchImage(imageLink: imageLink) { [weak self] result in
+            switch result {
             case .failure(let error):
-                print("caught error fetching image: \(error.localizedDescription)")
-            case .success(let img):
+                print("caught error: \(error.localizedDescription)")
+            case .success(let data):
                 DispatchQueue.main.async {
-                    customCell.image.image = img
+                    guard let image = UIImage(data: data) else {
+                        return
+                    }
+                    customCell.cellImageView.image = image
                 }
             }
         }

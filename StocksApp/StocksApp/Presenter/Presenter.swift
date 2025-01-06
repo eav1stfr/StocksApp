@@ -12,6 +12,7 @@ protocol StocksPresenterProtocol: AnyObject {
     func fetchRecentSearchFromDB() -> [String]
     func performSearch(with companyTicker: String) throws
     func resetSearchResults()
+    func fetchImage(imageLink: String, completion: @escaping (Result<Data, Error>)->Void)
 }
 
 final class StocksPresenter: StocksPresenterProtocol {
@@ -106,6 +107,20 @@ final class StocksPresenter: StocksPresenterProtocol {
                 if let idx = self.favoriteStocksList.firstIndex(where: {$0.stockTicker == stock.stockTicker}) {
                     dataManager.deleteFavoriteFromDB(self.favoriteStocksList[idx].stockTicker)
                     self.favoriteStocksList.remove(at: idx)
+                }
+            }
+        }
+    }
+    
+    func fetchImage(imageLink: String, completion: @escaping (Result<Data, Error>)->Void) {
+        dataManager.fetchStockImage(imageLink: imageLink) { result in
+            switch result {
+            case .failure(let error):
+                print("caught unexpected error trying to fetch image: \(error.localizedDescription)")
+                completion(.failure(error))
+            case .success(let data):
+                DispatchQueue.main.async {
+                    completion(.success(data))
                 }
             }
         }

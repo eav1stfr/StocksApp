@@ -8,7 +8,7 @@ struct StockModel {
     var stockTicker: String
     var companyName: String
     var positiveChange: Bool
-    var imageLink: String = "https://finnhub.io/api/logo?symbol="
+    var imageLink: String
 }
 
 struct StockModelToReceive: Codable {

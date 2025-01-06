@@ -1,13 +1,13 @@
 import UIKit
 
-protocol ViewStartSearchingDelegate: AnyObject {
+protocol StartSearchingViewDelegate: AnyObject {
     func displaySearchOption(with companyName: String)
     func fetchSearchRequestsFromDB() -> [String]
 }
 
-final class ViewStartSearching: UIView {
+final class StartSearchingView: UIView {
     
-    weak var delegate: ViewStartSearchingDelegate?
+    weak var delegate: StartSearchingViewDelegate?
     
     private let popularRequests: [String] = ["Apple", "Microsoft", "Google", "Bloomberg", "Meta", "Jane street", "Alibaba", "Tesla", "Amazon"]
     
@@ -99,7 +99,7 @@ final class ViewStartSearching: UIView {
     }
 }
 
-extension ViewStartSearching: HorizontalScrollDelegate {
+extension StartSearchingView: HorizontalScrollDelegate {
     func optionTapped(currString: String) {
         delegate?.displaySearchOption(with: currString)
     }

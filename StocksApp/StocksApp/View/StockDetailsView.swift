@@ -1,111 +1,115 @@
-//
-//  StockDetailsView.swift
-//  StocksApp
-//
-//  Created by Александр Эм on 30.12.2024.
-//
 import SwiftUI
 
-struct StockDetailsView: View {
-    var body: some View {
-        VStack {
-            Text("Hello world")
-            UpperButton(buttonText: "Chart")
-        }
-    }
+struct StockDetailView: View {
+    @State private var selectedTopButton: String = "Chart"
+    @State private var selectedBottomButton: String = "All"
     
-    var upperButton: some View {
-        Text("Chart")
-    }
-}
-
-struct UpperButton: View {
-    var buttonText: String
+    var stock: StockModel = StockModel(price: "$131.93",
+                                       changeInPrice: "+$0.12 (1.15%)",
+                                       isFavorite: true,
+                                       stockTicker: "AAPL",
+                                       companyName: "Apple inc.",
+                                       positiveChange: true,
+                                       imageLink: "")
+    
+    let topButtons = ["Chart", "Summary", "News", "Forecasts", "Ideas"]
+    let bottomButtons = ["D", "W", "M", "6M", "1Y", "All"]
+    
     var body: some View {
-        Button(action: {
-            print("Button tapped")
-        }, label: {
-            Text(buttonText)
-                .fontWeight(.bold)
-                .font(.system(size: 25))
-                .foregroundStyle(.black)
-        })
+        VStack(spacing: 20) {
+            HStack (spacing: 50) {
+                Image(systemName: "arrowshape.backward")
+                    .foregroundColor(.black)
+                VStack {
+                    Text(stock.stockTicker)
+                        .font(.title)
+                        .fontWeight(.bold)
+                    Text(stock.companyName)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+                Image(systemName: "star")
+                    .foregroundColor(
+                        stock.isFavorite ? .yellow : .gray
+                    )
+            }
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 16) {
+                    ForEach(topButtons, id: \.self) { button in
+                        Button(action: {
+                            selectedTopButton = button
+                        }) {
+                            Text(button)
+                                .fontWeight(.semibold)
+                                .foregroundColor(selectedTopButton == button ? .black : .gray)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 16)
+                                .background(
+                                    selectedTopButton == button ? Color.white : Color.clear
+                                )
+                                .cornerRadius(20)
+                                .shadow(color: selectedTopButton == button ? .gray.opacity(0.3) : .clear, radius: 5, x: 0, y: 2)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+            Spacer()
+            VStack {
+                Text("$\(stock.price)")
+                    .font(.system(size: 32, weight: .bold))
+                
+                Text(stock.changeInPrice)
+                    .foregroundColor(.green)
+                    .fontWeight(.medium)
+            }
+            Spacer()
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 16) {
+                    ForEach(bottomButtons, id: \.self) { button in
+                        Button(action: {
+                            selectedBottomButton = button
+                        }) {
+                            Text(button)
+                                .fontWeight(.semibold)
+                                .foregroundColor(selectedBottomButton == button ? .black : .gray)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 16)
+                                .background(
+                                    selectedBottomButton == button ? Color.white : Color.clear
+                                )
+                                .cornerRadius(20)
+                                .shadow(color: selectedBottomButton == button ? .gray.opacity(0.3) : .clear, radius: 5, x: 0, y: 2)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+            
+            Spacer()
+            
+            Button(action: {
+                
+            }) {
+                Text("Buy for \(stock.price)")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.black)
+                    .cornerRadius(25)
+                    .shadow(color: Color.purple.opacity(0.3), radius: 10, x: 0, y: 5)
+            }
+            .padding()
+        }
+        .background(Color(UIColor.systemGray6))
+        .edgesIgnoringSafeArea(.bottom)
     }
 }
 
-struct StockDetailsView_Previews: PreviewProvider {
+struct StockDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        StockDetailsView()
+        StockDetailView()
     }
 }
-
-//struct StockDetailsView: View {
-//
-//    @State var currentView: String = "Chart"
-//
-//    var body: some View {
-//        ZStack {
-//            Color(.systemBlue)
-//                .ignoresSafeArea()
-//            VStack {
-//                ScrollView(.horizontal, showsIndicators: false) {
-//                    HStack(spacing: 20) {
-//                        UpperButton(buttonText: "Chart", currentView: currentView)
-//                        UpperButton(buttonText: "Summary", currentView: currentView)
-//                        UpperButton(buttonText: "News", currentView: currentView)
-//                        UpperButton(buttonText: "Forecast", currentView: currentView)
-//                        UpperButton(buttonText: "Chart", currentView: currentView)
-//                    }
-//                }
-//                .padding(.horizontal)
-//                Divider()
-//                HStack {
-//                    SquareButton(buttonText: "All")
-//                }
-//            }
-//        }
-//    }
-//}
-//
-//struct SquareButton: View {
-//    var buttonText: String
-//    var body: some View {
-//        Button(action: {
-//            print("all button pressed")
-//        }) {
-//            Text(buttonText)
-//                .fontWeight(.bold)
-//                .foregroundColor(.white)
-//                .padding()
-//                .background(
-//                    Color.black
-//                        .cornerRadius(20)
-//                        .frame(width: 60, height: 60)
-//                )
-//        }
-//    }
-//}
-//
-//struct UpperButton: View {
-//    var buttonText: String
-//    var currentView: String
-//    var index: Int
-//    var body: some View {
-//        Button(action: {
-//            store.handleUpperButtonTapped(at: index)
-//        }) {
-//            if currentView == buttonText {
-//                Text(buttonText)
-//                    .foregroundColor(.white)
-//                    .fontWeight(.bold)
-//                    .font(.system(size: 25))
-//            } else {
-//                Text(buttonText)
-//                    .foregroundColor(.black)
-//                    .fontWeight(.bold)
-//                    .font(.system(size: 25))
-//            }
-//        }
-//    }
-//}
-//

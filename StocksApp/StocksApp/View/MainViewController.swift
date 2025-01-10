@@ -1,7 +1,9 @@
 import UIKit
+import SwiftUI
 
 protocol StocksViewProtocol: AnyObject {
     func updateTableData()
+    func showStockDetailView(stock: StockModel)
 }
 
 final class StocksViewController: UIViewController {
@@ -136,6 +138,11 @@ final class StocksViewController: UIViewController {
 extension StocksViewController: StocksViewProtocol {
     func updateTableData() {
         tableView.updateData()
+    }
+    
+    func showStockDetailView(stock: StockModel) {
+        let stockDetailViewController = UIHostingController(rootView: StockDetailView(stock: stock))
+        self.present(stockDetailViewController, animated: true)
     }
 }
 

@@ -13,13 +13,14 @@ protocol StocksPresenterProtocol: AnyObject {
     func performSearch(with companyTicker: String) throws
     func resetSearchResults()
     func fetchImage(imageLink: String, completion: @escaping (Result<Data, Error>)->Void)
+    func showStockDetailView(stock: StockModel)
 }
 
 final class StocksPresenter: StocksPresenterProtocol {
     
     private var savedFavStocks: [Favorite]?
     
-    private let companyTickers: [String] = ["AAPL", "AMZN", "BAC", "MSFT", "PFE", "JNJ", "XOM", "JPM", "CSCO", "KO"]
+    private let companyTickers: [String] = ["AMZN", "AAPL", "BAC", "MSFT", "PFE", "JNJ", "XOM", "JPM", "CSCO", "KO", "APPN", "APPF"]
 
     private var currentViewIsStocks: Bool = true
     
@@ -179,4 +180,9 @@ final class StocksPresenter: StocksPresenterProtocol {
     func resetSearchResults() {
         self.searchResultList = []
     }
+    
+    func showStockDetailView(stock: StockModel) {
+        self.view?.showStockDetailView(stock: stock)
+    }
+
 }

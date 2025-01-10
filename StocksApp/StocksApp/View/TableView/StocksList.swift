@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI
 
 final class StocksList: UIView {
     weak var presenter: StocksPresenterProtocol!
@@ -42,6 +43,7 @@ extension StocksList: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        presenter.showStockDetailView(stock: presenter.getItem(at: indexPath))
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -59,7 +61,7 @@ extension StocksList: UITableViewDelegate, UITableViewDataSource {
         customCell.setBackgroundColor(indexPath.row%2==0 ? .systemGray6 : .white)
         customCell.delegate = self
         let imageLink = presenter.getItem(at: indexPath).imageLink
-        presenter.fetchImage(imageLink: imageLink) { [weak self] result in
+        presenter.fetchImage(imageLink: imageLink) { result in
             switch result {
             case .failure(let error):
                 print("caught error: \(error.localizedDescription)")

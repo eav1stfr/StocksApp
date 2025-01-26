@@ -43,7 +43,7 @@ extension StocksList: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        presenter.showStockDetailView(stock: presenter.getItem(at: indexPath))
+        presenter.showStockDetailView(index: indexPath)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

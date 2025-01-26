@@ -13,14 +13,14 @@ protocol StocksPresenterProtocol: AnyObject {
     func performSearch(with companyTicker: String) throws
     func resetSearchResults()
     func fetchImage(imageLink: String, completion: @escaping (Result<Data, Error>)->Void)
-    func showStockDetailView(stock: StockModel)
+    func showStockDetailView(index: IndexPath)
 }
 
 final class StocksPresenter: StocksPresenterProtocol {
     
     private var savedFavStocks: [Favorite]?
     
-    private let companyTickers: [String] = ["AMZN", "AAPL", "BAC", "MSFT", "PFE", "JNJ", "XOM", "JPM", "CSCO", "KO", "APPN", "APPF"]
+    private let companyTickers: [String] = ["AMZN", "META", "NFLX","AAPL", "BAC", "MSFT", "PFE", "JNJ", "XOM", "JPM", "CSCO", "KO", "APPN", "APPF"]
 
     private var currentViewIsStocks: Bool = true
     
@@ -168,7 +168,7 @@ final class StocksPresenter: StocksPresenterProtocol {
         return searchArrToReturn
     }
     
-    func performSearch(with companyTicker: String) throws {
+    func performSearchTest(with companyTicker: String) throws {
         guard let stock = stocksList.first(where: {$0.stockTicker == companyTicker}) else {
             throw NSError()
         }
@@ -177,12 +177,25 @@ final class StocksPresenter: StocksPresenterProtocol {
         view?.updateTableData()
     }
     
-    func resetSearchResults() {
-        self.searchResultList = []
+    func performSearch(with companyTicker: String) throws {
+        let matchingStocks = stocksList.filter({
+                $0.stockTicker.uppercased().hasPrefix(companyTicker.uppercased())
+            })
+        
+        for stock in matchingStocks {
+            searchResultList.append(stock)
+        }
+        currentStocksListToShow = searchResultList
+        view?.updateTableData()
     }
     
-    func showStockDetailView(stock: StockModel) {
-        self.view?.showStockDetailView(stock: stock)
+    func resetSearchResults() {
+        searchResultList = []
+        currentStocksListToShow = stocksList
+    }
+    
+    func showStockDetailView(index: IndexPath) {
+        self.view?.showStockDetailView(stock: self.getItem(at: index))
     }
 
 }

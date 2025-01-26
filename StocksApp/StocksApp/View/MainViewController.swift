@@ -61,6 +61,7 @@ final class StocksViewController: UIViewController {
     
     private func setupView() {
         searchField.delegate = self
+        searchField.textFieldDelegate = self
         searchView.delegate = self
         searchView.updateData()
         view.backgroundColor = .white
@@ -133,6 +134,11 @@ final class StocksViewController: UIViewController {
         presenter?.favoriteChosen()
     }
     
+    private func startEditing(status: Bool) {
+        searchField.clearButton.isHidden = !status
+        searchField.backButton.isHidden = !status
+        searchField.searchButton.isHidden = status
+    }
 }
 
 extension StocksViewController: StocksViewProtocol {
@@ -141,7 +147,11 @@ extension StocksViewController: StocksViewProtocol {
     }
     
     func showStockDetailView(stock: StockModel) {
-        let stockDetailViewController = UIHostingController(rootView: StockDetailView(stock: stock))
+        let stockDetailView = StockDetailView(dismissAction: { [weak self] in
+            self?.dismiss(animated: true)
+        }, stock: stock)
+        let stockDetailViewController = UIHostingController(rootView: stockDetailView)
+        stockDetailViewController.modalPresentationStyle = .fullScreen
         self.present(stockDetailViewController, animated: true)
     }
 }
@@ -149,10 +159,12 @@ extension StocksViewController: StocksViewProtocol {
 extension StocksViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         searchView.isHidden = false
+        self.startEditing(status: true)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         searchField.endEditing(true)
+        self.startEditing(status: false)
         return true
     }
     
@@ -169,9 +181,33 @@ extension StocksViewController: UITextFieldDelegate {
                 self.present(alert, animated: true)
             }
         }
+        self.startEditing(status: false)
         searchView.isHidden = true
-        searchField.text = ""
     }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        if currentText == "" {
+            presenter?.resetSearchResults()
+            searchView.isHidden = true
+            return true
+        }
+        guard let textRange = Range(range, in: currentText) else { return true }
+        let updatedText = currentText.replacingCharacters(in: textRange, with: string)
+
+        if !updatedText.isEmpty {
+            presenter?.resetSearchResults()
+            do {
+                try presenter?.performSearch(with: updatedText)
+            } catch {
+                print("No such tickers")
+            }
+        }
+        searchView.isHidden = true
+
+        return true
+    }
+
 }
 
 extension StocksViewController: StartSearchingViewDelegate {
@@ -186,5 +222,25 @@ extension StocksViewController: StartSearchingViewDelegate {
         }
         arrToReturn = arr
         return arrToReturn
+    }
+}
+
+extension StocksViewController: TextFieldSearchDelegate {
+    
+    func searchButtonTapped() {
+        
+    }
+    
+    func clearButtonTapped() {
+        searchField.text = ""
+        print("clear button pressed")
+    }
+    
+    func backButtonTapped() {
+        searchField.endEditing(true)
+        searchField.text = ""
+        presenter?.resetSearchResults()
+        print("back button pressed")
+        searchView.isHidden = true
     }
 }

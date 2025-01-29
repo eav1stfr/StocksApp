@@ -195,7 +195,18 @@ final class StocksPresenter: StocksPresenterProtocol {
     }
     
     func showStockDetailView(index: IndexPath) {
-        self.view?.showStockDetailView(stock: self.getItem(at: index))
+        let stockTicker = self.getItem(at: index).stockTicker
+        dataManager.fetchStockPriceHistory(ticker: stockTicker) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let stockPrices):
+                DispatchQueue.main.async {
+                    self.view?.showStockDetailView(stock: self.getItem(at: index), stockPriceHistory: stockPrices)
+                }
+            case .failure(let error):
+                print("Caught error: \(error.localizedDescription)")
+            }
+        }
     }
-
 }

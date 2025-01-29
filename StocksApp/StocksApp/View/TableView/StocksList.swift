@@ -1,6 +1,7 @@
 import UIKit
 import SwiftUI
 
+
 final class StocksList: UIView {
     weak var presenter: StocksPresenterProtocol!
     
@@ -12,6 +13,7 @@ final class StocksList: UIView {
         table.translatesAutoresizingMaskIntoConstraints = false
         table.register(StocksListCell.self, forCellReuseIdentifier: StocksListCell.id)
         table.rowHeight = 68
+        table.separatorStyle = .none
         return table
     }()
     

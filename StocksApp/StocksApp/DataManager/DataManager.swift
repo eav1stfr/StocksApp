@@ -9,6 +9,7 @@ protocol DataManagerProtocol {
     func deleteFavoriteFromDB(_ ticker: String)
     func addToRecentSearchDB(name: String)
     func fetchFromRecentSearchDB() -> [RecentSearch]
+    func fetchStockPriceHistory(ticker: String, completion: @escaping (Result<StockData, Error>)->Void)
 }
 
 final class DataManager: DataManagerProtocol {
@@ -143,4 +144,36 @@ final class DataManager: DataManagerProtocol {
         }
         task.resume()
     }
+    
+    func fetchStockPriceHistory(ticker: String, completion: @escaping (Result<StockData, Error>)->Void) {
+        let apiLink: String = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=\(ticker)&apikey=X575MKP92PLLPXUI"
+        guard let url = URL(string: apiLink) else {
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        let task = URLSession.shared.dataTask(with: request) { data, responce, error in
+            if error != nil {
+                print("CAUGHT ERROR: \(String(describing: error?.localizedDescription))")
+                completion(.failure(error!))
+                return
+            }
+            guard let safeData = data else {
+                print("no data received")
+                completion(.failure(error!))
+                return
+            }
+            do {
+                let stockData = try JSONDecoder().decode(StockData.self, from: safeData)
+                completion(.success(stockData))
+            } catch {
+                print("HERE")
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
+
 }
+
+//X575MKP92PLLPXUI

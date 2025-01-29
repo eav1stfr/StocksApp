@@ -3,7 +3,7 @@ import SwiftUI
 
 protocol StocksViewProtocol: AnyObject {
     func updateTableData()
-    func showStockDetailView(stock: StockModel)
+    func showStockDetailView(stock: StockModel, stockPriceHistory: StockData)
 }
 
 final class StocksViewController: UIViewController {
@@ -146,10 +146,10 @@ extension StocksViewController: StocksViewProtocol {
         tableView.updateData()
     }
     
-    func showStockDetailView(stock: StockModel) {
-        let stockDetailView = StockDetailView(dismissAction: { [weak self] in
+    func showStockDetailView(stock: StockModel, stockPriceHistory: StockData) {
+        let stockDetailView = StockDetailView(stock: stock, stockPriceHistory: stockPriceHistory) { [weak self] in
             self?.dismiss(animated: true)
-        }, stock: stock)
+        }
         let stockDetailViewController = UIHostingController(rootView: stockDetailView)
         stockDetailViewController.modalPresentationStyle = .fullScreen
         self.present(stockDetailViewController, animated: true)

@@ -1,7 +1,10 @@
 import UIKit
+import SwiftUI
 
 protocol StocksViewProtocol: AnyObject {
     func updateTableData()
+    func showStockDetailView(stock: StockModel, stockPriceHistory: StockData)
+    func updateCurrentList()
 }
 
 final class StocksViewController: UIViewController {
@@ -12,6 +15,10 @@ final class StocksViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         presenter?.viewLoaded()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        presenter?.updateFavoriteList()
     }
     
     private var isCurrentViewStocks: Bool = true
@@ -59,6 +66,7 @@ final class StocksViewController: UIViewController {
     
     private func setupView() {
         searchField.delegate = self
+        searchField.textFieldDelegate = self
         searchView.delegate = self
         searchView.updateData()
         view.backgroundColor = .white
@@ -131,21 +139,41 @@ final class StocksViewController: UIViewController {
         presenter?.favoriteChosen()
     }
     
+    private func startEditing(status: Bool) {
+        searchField.clearButton.isHidden = !status
+        searchField.backButton.isHidden = !status
+        searchField.searchButton.isHidden = status
+    }
 }
 
 extension StocksViewController: StocksViewProtocol {
     func updateTableData() {
         tableView.updateData()
     }
+    
+    func showStockDetailView(stock: StockModel, stockPriceHistory: StockData) {
+        let stockDetailView = StockDetailView(stock: stock, stockPriceHistory: stockPriceHistory, presenter: presenter, isFav: stock.isFavorite) { [weak self] in
+            self?.dismiss(animated: true)
+        }
+        let stockDetailViewController = UIHostingController(rootView: stockDetailView)
+        stockDetailViewController.modalPresentationStyle = .fullScreen
+        self.present(stockDetailViewController, animated: true)
+    }
+    
+    func updateCurrentList() {
+        
+    }
 }
 
 extension StocksViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         searchView.isHidden = false
+        self.startEditing(status: true)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         searchField.endEditing(true)
+        self.startEditing(status: false)
         return true
     }
     
@@ -162,9 +190,33 @@ extension StocksViewController: UITextFieldDelegate {
                 self.present(alert, animated: true)
             }
         }
+        self.startEditing(status: false)
         searchView.isHidden = true
-        searchField.text = ""
     }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        if currentText == "" {
+            presenter?.resetSearchResults()
+            searchView.isHidden = true
+            return true
+        }
+        guard let textRange = Range(range, in: currentText) else { return true }
+        let updatedText = currentText.replacingCharacters(in: textRange, with: string)
+
+        if !updatedText.isEmpty {
+            presenter?.resetSearchResults()
+            do {
+                try presenter?.performSearch(with: updatedText)
+            } catch {
+                print("No such tickers")
+            }
+        }
+        searchView.isHidden = true
+
+        return true
+    }
+
 }
 
 extension StocksViewController: StartSearchingViewDelegate {
@@ -179,5 +231,25 @@ extension StocksViewController: StartSearchingViewDelegate {
         }
         arrToReturn = arr
         return arrToReturn
+    }
+}
+
+extension StocksViewController: TextFieldSearchDelegate {
+    
+    func searchButtonTapped() {
+        
+    }
+    
+    func clearButtonTapped() {
+        searchField.text = ""
+        print("clear button pressed")
+    }
+    
+    func backButtonTapped() {
+        searchField.endEditing(true)
+        searchField.text = ""
+        presenter?.resetSearchResults()
+        print("back button pressed")
+        searchView.isHidden = true
     }
 }

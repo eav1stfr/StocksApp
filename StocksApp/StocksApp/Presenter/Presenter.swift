@@ -13,13 +13,15 @@ protocol StocksPresenterProtocol: AnyObject {
     func performSearch(with companyTicker: String) throws
     func resetSearchResults()
     func fetchImage(imageLink: String, completion: @escaping (Result<Data, Error>)->Void)
+    func showStockDetailView(index: IndexPath)
+    func updateFavoriteList()
 }
 
 final class StocksPresenter: StocksPresenterProtocol {
     
     private var savedFavStocks: [Favorite]?
     
-    private let companyTickers: [String] = ["AAPL", "AMZN", "BAC", "MSFT", "PFE", "JNJ", "XOM", "JPM", "CSCO", "KO"]
+    private let companyTickers: [String] = ["AMZN", "META", "NFLX","AAPL", "BAC", "MSFT", "PFE", "JNJ", "XOM", "JPM", "CSCO", "KO", "APPN", "APPF"]
 
     private var currentViewIsStocks: Bool = true
     
@@ -86,6 +88,23 @@ final class StocksPresenter: StocksPresenterProtocol {
             
             view?.updateTableData()
         }
+    }
+    
+    func updateFavoriteList() {
+        savedFavStocks = dataManager.fetchFavoriteFromDB()
+        guard let savedFav = savedFavStocks else {
+            return
+        }
+        
+        for i in 0..<currentStocksListToShow.count {
+            if savedFav.contains(where: { $0.ticker == currentStocksListToShow[i].stockTicker}) {
+                currentStocksListToShow[i].isFavorite = true
+            } else {
+                currentStocksListToShow[i].isFavorite = false
+            }
+        }
+        
+        view?.updateTableData()
     }
     
     func addToFavoriteTapped(stock: StockModel) {
@@ -167,7 +186,7 @@ final class StocksPresenter: StocksPresenterProtocol {
         return searchArrToReturn
     }
     
-    func performSearch(with companyTicker: String) throws {
+    func performSearchTest(with companyTicker: String) throws {
         guard let stock = stocksList.first(where: {$0.stockTicker == companyTicker}) else {
             throw NSError()
         }
@@ -176,7 +195,36 @@ final class StocksPresenter: StocksPresenterProtocol {
         view?.updateTableData()
     }
     
+    func performSearch(with companyTicker: String) throws {
+        let matchingStocks = stocksList.filter({
+                $0.stockTicker.uppercased().hasPrefix(companyTicker.uppercased())
+            })
+        
+        for stock in matchingStocks {
+            searchResultList.append(stock)
+        }
+        currentStocksListToShow = searchResultList
+        view?.updateTableData()
+    }
+    
     func resetSearchResults() {
-        self.searchResultList = []
+        searchResultList = []
+        currentStocksListToShow = stocksList
+    }
+    
+    func showStockDetailView(index: IndexPath) {
+        let stockTicker = self.getItem(at: index).stockTicker
+        dataManager.fetchStockPriceHistory(ticker: stockTicker) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let stockPrices):
+                DispatchQueue.main.async {
+                    self.view?.showStockDetailView(stock: self.getItem(at: index), stockPriceHistory: stockPrices)
+                }
+            case .failure(let error):
+                print("Caught error: \(error.localizedDescription)")
+            }
+        }
     }
 }

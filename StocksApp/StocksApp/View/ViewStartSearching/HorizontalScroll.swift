@@ -15,6 +15,7 @@ final class HorizontalScroll: UIScrollView {
         stack.axis = .horizontal
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.backgroundColor = .white
+        stack.distribution = .fill
         stack.spacing = 15
         return stack
     }()
@@ -24,6 +25,7 @@ final class HorizontalScroll: UIScrollView {
         stack.axis = .horizontal
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.backgroundColor = .white
+        stack.distribution = .fill
         stack.spacing = 15
         return stack
     }()
@@ -70,7 +72,7 @@ final class HorizontalScroll: UIScrollView {
             let button: StockSearchOptionButton = {
                 let button = StockSearchOptionButton()
                 button.setTitle(requests[i], for: .normal)
-                button.isUserInteractionEnabled = true
+                //button.isUserInteractionEnabled = true
                 button.addTarget(self, action: #selector(optionChosen), for: .touchUpInside)
                 button.translatesAutoresizingMaskIntoConstraints = false
                 return button
@@ -82,7 +84,7 @@ final class HorizontalScroll: UIScrollView {
             let button: StockSearchOptionButton = {
                 let button = StockSearchOptionButton()
                 button.setTitle(requests[i], for: .normal)
-                button.isUserInteractionEnabled = true
+                //button.isUserInteractionEnabled = true
                 button.addTarget(self, action: #selector(optionChosen), for: .touchUpInside)
                 button.translatesAutoresizingMaskIntoConstraints = false
                 return button

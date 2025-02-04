@@ -14,6 +14,7 @@ protocol StocksPresenterProtocol: AnyObject {
     func resetSearchResults()
     func fetchImage(imageLink: String, completion: @escaping (Result<Data, Error>)->Void)
     func showStockDetailView(index: IndexPath)
+    func updateFavoriteList()
 }
 
 final class StocksPresenter: StocksPresenterProtocol {
@@ -87,6 +88,23 @@ final class StocksPresenter: StocksPresenterProtocol {
             
             view?.updateTableData()
         }
+    }
+    
+    func updateFavoriteList() {
+        savedFavStocks = dataManager.fetchFavoriteFromDB()
+        guard let savedFav = savedFavStocks else {
+            return
+        }
+        
+        for i in 0..<currentStocksListToShow.count {
+            if savedFav.contains(where: { $0.ticker == currentStocksListToShow[i].stockTicker}) {
+                currentStocksListToShow[i].isFavorite = true
+            } else {
+                currentStocksListToShow[i].isFavorite = false
+            }
+        }
+        
+        view?.updateTableData()
     }
     
     func addToFavoriteTapped(stock: StockModel) {

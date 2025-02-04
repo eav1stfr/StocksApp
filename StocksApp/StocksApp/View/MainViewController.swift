@@ -4,6 +4,7 @@ import SwiftUI
 protocol StocksViewProtocol: AnyObject {
     func updateTableData()
     func showStockDetailView(stock: StockModel, stockPriceHistory: StockData)
+    func updateCurrentList()
 }
 
 final class StocksViewController: UIViewController {
@@ -14,6 +15,10 @@ final class StocksViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         presenter?.viewLoaded()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        presenter?.updateFavoriteList()
     }
     
     private var isCurrentViewStocks: Bool = true
@@ -147,12 +152,16 @@ extension StocksViewController: StocksViewProtocol {
     }
     
     func showStockDetailView(stock: StockModel, stockPriceHistory: StockData) {
-        let stockDetailView = StockDetailView(stock: stock, stockPriceHistory: stockPriceHistory) { [weak self] in
+        let stockDetailView = StockDetailView(stock: stock, stockPriceHistory: stockPriceHistory, presenter: presenter, isFav: stock.isFavorite) { [weak self] in
             self?.dismiss(animated: true)
         }
         let stockDetailViewController = UIHostingController(rootView: stockDetailView)
         stockDetailViewController.modalPresentationStyle = .fullScreen
         self.present(stockDetailViewController, animated: true)
+    }
+    
+    func updateCurrentList() {
+        
     }
 }
 

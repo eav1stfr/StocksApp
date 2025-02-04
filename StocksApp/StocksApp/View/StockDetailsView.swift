@@ -10,13 +10,19 @@ struct StockDetailView: View {
     @State private var selectedTopButton: String = "Chart"
     @State private var selectedBottomButton: String = "All"
     @State private var selectedID: String?
+    @State private var isFav: Bool?
+    weak var presenter: StocksPresenterProtocol?
+    
     var dismissAction: (() -> Void)?
     
     var stock: StockModel
     var stockPriceHistory: StockData?
+    @State private var selectedPricePoint: PricePoint?
     
-    init(stock: StockModel, stockPriceHistory: StockData? , dismissAction: (() -> Void)? = nil) {
+    init(stock: StockModel, stockPriceHistory: StockData? , presenter: StocksPresenterProtocol?, isFav: Bool?, dismissAction: (() -> Void)? = nil) {
+        self._isFav = State(initialValue: isFav)
         self.stock = stock
+        self.presenter = presenter
         self.stockPriceHistory = stockPriceHistory
         self.dismissAction = dismissAction
     }
@@ -97,11 +103,21 @@ struct StockDetailView: View {
                     .foregroundColor(.gray)
             }
             Spacer()
-            Image(systemName: "star")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
-                .foregroundColor(stock.isFavorite ? .yellow : .gray)
+            Button(action: {
+                if (stock.isFavorite) {
+                    presenter?.deleteFromFavorite(stock: self.stock)
+                    self.isFav = false
+                } else {
+                    presenter?.addToFavoriteTapped(stock: self.stock)
+                    self.isFav = true
+                }
+            }) {
+                Image(systemName: "star.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(isFav ?? false ? .yellow : .gray)
+            }
         }
         .padding(.horizontal, 16)
     }
@@ -215,67 +231,9 @@ struct StockDetailView_Previews: PreviewProvider {
                 positiveChange: true,
                 imageLink: "ayo"
             ),
-            stockPriceHistory: nil
+            stockPriceHistory: nil,
+            presenter: nil, isFav: true
         )
     }
 }
 
-
-
-
-//Chart {
-//    ForEach(viewModel.pricesPerPeriod) { priceDay in
-//        LineMark(
-//            x: .value("id", priceDay.id),
-//            y: .value("Price", priceDay.price)
-//        )
-//        AreaMark(
-//            x: .value("id", priceDay.id),
-//            yStart: .value("Price", 0),
-//            yEnd: .value("Price", priceDay.price)
-//        )
-//        .foregroundStyle(
-//            Color.pink.opacity(0.2)
-//        )
-//    }
-//    .foregroundStyle(Color.pink)
-//
-//    if let selectedData = viewModel.pricesPerPeriod.first(where: { $0.id == selectedID }) {
-//        PointMark(
-//            x: .value("id", selectedData.id),
-//            y: .value("Price", selectedData.price)
-//        )
-//        .symbol {
-//            ZStack {
-//                Circle()
-//                    .strokeBorder(Color.white, lineWidth: 4)
-//                    .frame(width: 12, height: 12)
-//                Circle()
-//                    .fill(Color.pink)
-//                    .frame(width: 8, height: 8)
-//            }
-//        }
-//    }
-//
-//    if let selectedID {
-//        RuleMark(x: .value("Index", selectedID))
-//            .foregroundStyle(Color.clear)
-//            .annotation(position: .top, overflowResolution: .init(x: .fit(to: .chart), y: .disabled)) {
-//                VStack {
-//                    Text(viewModel.getPriceForIndex(of: selectedID))
-//                        .font(.title3)
-//                    Text(viewModel.getDateForIndex(of: selectedID))
-//                        .font(.caption)
-//
-//                }
-//                .foregroundStyle(Color.white)
-//                .padding(12)
-//                .background(RoundedRectangle(cornerRadius: 10).fill(.pink.gradient).opacity(0.95))
-//            }
-//    }
-//}
-//.frame(height: 260)
-//.padding(.top, 100)
-//.chartXAxis(.hidden)
-//.chartYAxis(.hidden)
-//.chartXSelection(value: $selectedID)
